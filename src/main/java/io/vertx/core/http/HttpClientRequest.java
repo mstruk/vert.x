@@ -29,7 +29,7 @@ import io.vertx.core.streams.WriteStream;
 /**
  * Represents a client-side HTTP request.<p>
  * Instances are created by an {@link HttpClient} instance, via one of the methods corresponding to the
- * specific HTTP methods, or the generic {@link HttpClient#request} method.<p>
+ * specific HTTP methods, or the generic {@link HttpClient#requestAbs} method.<p>
  * Once a request has been obtained, headers can be set on it, and data can be written to its body if required. Once
  * you are ready to send the request, the {@link #end()} method should be called.<p>
  * Nothing is actually sent until the request has been internally assigned an HTTP connection. The {@link HttpClient}

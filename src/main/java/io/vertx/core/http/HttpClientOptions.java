@@ -34,6 +34,8 @@ public class HttpClientOptions extends ClientOptionsBase {
   public static final boolean DEFAULT_TRY_USE_COMPRESSION = false;
   public static final boolean DEFAULT_VERIFY_HOST = true;
   public static final int DEFAULT_MAX_WEBSOCKET_FRAME_SIZE = 65536;
+  public static final String DEFAULT_DEFAULT_HOST = "localhost";
+  public static final int DEFAULT_DEFAULT_PORT = 80;
 
   private boolean verifyHost = true;
   private int maxPoolSize;
@@ -41,6 +43,8 @@ public class HttpClientOptions extends ClientOptionsBase {
   private boolean pipelining;
   private boolean tryUseCompression;
   private int maxWebsocketFrameSize;
+  private String defaultHost;
+  private int defaultPort;
 
   public HttpClientOptions(HttpClientOptions other) {
     super(other);
@@ -50,6 +54,8 @@ public class HttpClientOptions extends ClientOptionsBase {
     this.pipelining = other.isPipelining();
     this.tryUseCompression = other.isTryUseCompression();
     this.maxWebsocketFrameSize = other.maxWebsocketFrameSize;
+    this.defaultHost = other.defaultHost;
+    this.defaultPort = other.defaultPort;
   }
 
   public HttpClientOptions(JsonObject json) {
@@ -60,6 +66,8 @@ public class HttpClientOptions extends ClientOptionsBase {
     this.pipelining = json.getBoolean("pipelining", DEFAULT_PIPELINING);
     this.tryUseCompression = json.getBoolean("tryUseCompression", DEFAULT_TRY_USE_COMPRESSION);
     this.maxWebsocketFrameSize = json.getInteger("maxWebsocketFrameSize", DEFAULT_MAX_WEBSOCKET_FRAME_SIZE);
+    this.defaultHost = json.getString("defaultHost", DEFAULT_DEFAULT_HOST);
+    this.defaultPort = json.getInteger("defaultPort", DEFAULT_DEFAULT_PORT);
   }
 
   public HttpClientOptions() {
@@ -70,6 +78,8 @@ public class HttpClientOptions extends ClientOptionsBase {
     pipelining = DEFAULT_PIPELINING;
     tryUseCompression = DEFAULT_TRY_USE_COMPRESSION;
     maxWebsocketFrameSize = DEFAULT_MAX_WEBSOCKET_FRAME_SIZE;
+    defaultHost = DEFAULT_DEFAULT_HOST;
+    defaultPort = DEFAULT_DEFAULT_PORT;
   }
 
   @Override
@@ -219,6 +229,24 @@ public class HttpClientOptions extends ClientOptionsBase {
     return this;
   }
 
+  public String getDefaultHost() {
+    return defaultHost;
+  }
+
+  public HttpClientOptions setDefaultHost(String defaultHost) {
+    this.defaultHost = defaultHost;
+    return this;
+  }
+
+  public int getDefaultPort() {
+    return defaultPort;
+  }
+
+  public HttpClientOptions setDefaultPort(int defaultPort) {
+    this.defaultPort = defaultPort;
+    return this;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -227,12 +255,14 @@ public class HttpClientOptions extends ClientOptionsBase {
 
     HttpClientOptions that = (HttpClientOptions) o;
 
+    if (defaultPort != that.defaultPort) return false;
     if (keepAlive != that.keepAlive) return false;
     if (maxPoolSize != that.maxPoolSize) return false;
+    if (maxWebsocketFrameSize != that.maxWebsocketFrameSize) return false;
     if (pipelining != that.pipelining) return false;
     if (tryUseCompression != that.tryUseCompression) return false;
     if (verifyHost != that.verifyHost) return false;
-    if (maxWebsocketFrameSize != that.maxWebsocketFrameSize) return false;
+    if (!defaultHost.equals(that.defaultHost)) return false;
 
     return true;
   }
@@ -246,8 +276,10 @@ public class HttpClientOptions extends ClientOptionsBase {
     result = 31 * result + (pipelining ? 1 : 0);
     result = 31 * result + (tryUseCompression ? 1 : 0);
     result = 31 * result + maxWebsocketFrameSize;
+    result = 31 * result + defaultHost.hashCode();
+    result = 31 * result + defaultPort;
     return result;
   }
-
-
 }
+
+

@@ -37,25 +37,18 @@ import io.vertx.core.metrics.Measured;
 @VertxGen
 public interface HttpClient extends Measured {
 
-  HttpClientRequest request(HttpMethod method, String absoluteURI);
+  HttpClientRequest requestAbs(HttpMethod method, String absoluteURI);
 
-  /**
-   * Create a new http client request.
-   *
-   * The returned request does not have yet a response handler and one should be set before sending
-   * any data to the remote server.
-   *
-   * @param method the http method
-   * @param port the remote server port
-   * @param host the remote server host
-   * @param requestURI the request uri
-   * @return the http client request
-   */
   HttpClientRequest request(HttpMethod method, int port, String host, String requestURI);
 
-  HttpClientRequest request(HttpMethod method, String absoluteURI, Handler<HttpClientResponse> responseHandler);
+  HttpClientRequest requestAbs(HttpMethod method, String absoluteURI, Handler<HttpClientResponse> responseHandler);
 
   HttpClientRequest request(HttpMethod method, int port, String host, String requestURI, Handler<HttpClientResponse> responseHandler);
+
+  HttpClientRequest request(HttpMethod method, String requestURI);
+
+  HttpClientRequest request(HttpMethod method, String requestURI, Handler<HttpClientResponse> responseHandler);
+
 
 
   WebSocketStream websocket(int port, String host, String requestURI);
@@ -64,11 +57,18 @@ public interface HttpClient extends Measured {
 
   WebSocketStream websocket(int port, String host, String requestURI, MultiMap headers, WebsocketVersion version);
 
-  /**
-   * @return a {@link io.vertx.core.http.WebSocketStream} configured with the specified arguments
-   */
   WebSocketStream websocket(int port, String host, String requestURI, MultiMap headers, WebsocketVersion version,
                                    String subProtocols);
+
+  WebSocketStream websocket(String requestURI);
+
+  WebSocketStream websocket(String requestURI, MultiMap headers);
+
+  WebSocketStream websocket(String requestURI, MultiMap headers, WebsocketVersion version);
+
+  WebSocketStream websocket(String requestURI, MultiMap headers, WebsocketVersion version,
+                            String subProtocols);
+
 
   HttpClient connectWebsocket(int port, String host, String requestURI, Handler<WebSocket> wsConnect);
 
@@ -78,10 +78,18 @@ public interface HttpClient extends Measured {
                               Handler<WebSocket> wsConnect);
 
   HttpClient connectWebsocket(int port, String host, String requestURI, MultiMap headers, WebsocketVersion version,
-                                   String subProtocols, Handler<WebSocket> wsConnect);
+                              String subProtocols, Handler<WebSocket> wsConnect);
 
-  /**
-   * Close the HTTP client. This will cause any pooled HTTP connections to be closed.
-   */
+  HttpClient connectWebsocket(String requestURI, Handler<WebSocket> wsConnect);
+
+  HttpClient connectWebsocket(String requestURI, MultiMap headers, Handler<WebSocket> wsConnect);
+
+  HttpClient connectWebsocket(String requestURI, MultiMap headers, WebsocketVersion version,
+                              Handler<WebSocket> wsConnect);
+
+  HttpClient connectWebsocket(String requestURI, MultiMap headers, WebsocketVersion version,
+                              String subProtocols, Handler<WebSocket> wsConnect);
+
+
   void close();
 }

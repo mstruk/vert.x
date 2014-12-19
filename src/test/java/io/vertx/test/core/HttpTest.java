@@ -874,7 +874,8 @@ public class HttpTest extends HttpTestBase {
     String uri = "/some-uri?foo=bar";
     TestUtils.assertNullPointerException(() -> client.request(HttpMethod.GET, DEFAULT_HTTP_PORT, DEFAULT_HTTP_HOST, uri, null));
     TestUtils.assertNullPointerException(() -> client.request((HttpMethod)null, DEFAULT_HTTP_PORT, DEFAULT_HTTP_HOST, uri, resp -> {}));
-    TestUtils.assertNullPointerException(() -> client.request((HttpMethod)null, "http://someuri", resp -> {}));
+    TestUtils.assertNullPointerException(() -> client.requestAbs((HttpMethod) null, "http://someuri", resp -> {
+    }));
     TestUtils.assertNullPointerException(() -> client.request(HttpMethod.GET, 8080, "localhost", "/somepath", null));
     TestUtils.assertNullPointerException(() -> client.request((HttpMethod)null, 8080, "localhost", "/somepath", resp -> {}));
     TestUtils.assertNullPointerException(() -> client.request(HttpMethod.GET, 8080, null, "/somepath", resp -> {}));
@@ -884,7 +885,7 @@ public class HttpTest extends HttpTestBase {
   @Test
   public void testInvalidAbsoluteURI() {
     try {
-      client.request(HttpMethod.GET, "ijdijwidjqwoijd192d192192ej12d", resp -> {
+      client.requestAbs(HttpMethod.GET, "ijdijwidjqwoijd192d192192ej12d", resp -> {
       }).end();
       fail("Should throw exception");
     } catch (VertxException e) {
@@ -1007,7 +1008,7 @@ public class HttpTest extends HttpTestBase {
   private void testSimpleRequest(String uri, HttpMethod method, boolean absolute, Handler<HttpClientResponse> handler) {
     HttpClientRequest req;
     if (absolute) {
-      req = client.request(method, "http://" + DEFAULT_HTTP_HOST + ":" + DEFAULT_HTTP_PORT + uri, handler);
+      req = client.requestAbs(method, "http://" + DEFAULT_HTTP_HOST + ":" + DEFAULT_HTTP_PORT + uri, handler);
     } else {
       req = client.request(method, DEFAULT_HTTP_PORT, DEFAULT_HTTP_HOST, uri, handler);
     }
