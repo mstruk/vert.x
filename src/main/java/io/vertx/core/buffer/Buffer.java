@@ -27,8 +27,8 @@ import io.vertx.core.spi.BufferFactory;
 import java.nio.ByteBuffer;
 
 /**
- * A Buffer represents a sequence of zero or more bytes that can be written to or read from, and which expands as
- * necessary to accommodate any bytes written to it.<p>
+ * <p>A Buffer represents a sequence of zero or more bytes that can be written to or read from, and which expands as
+ * necessary to accommodate any bytes written to it.</p>
  * There are two ways to write data to a Buffer: The first method involves methods that take the form {@code setXXX}.
  * These methods write data into the buffer starting at the specified position. The position does not have to be inside data that
  * has already been written to the buffer; the buffer will automatically expand to encompass the position plus any data that needs

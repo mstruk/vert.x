@@ -512,13 +512,13 @@ public class VertxImpl implements VertxInternal {
   }
 
   @Override
-  public void undeployVerticle(String deploymentID) {
-    undeployVerticle(deploymentID, res -> {
+  public void undeploy(String deploymentID) {
+    undeploy(deploymentID, res -> {
     });
   }
 
   @Override
-  public void undeployVerticle(String deploymentID, Handler<AsyncResult<Void>> completionHandler) {
+  public void undeploy(String deploymentID, Handler<AsyncResult<Void>> completionHandler) {
     if (haManager() != null) {
       haManager().removeFromHA(deploymentID);
     }
@@ -526,7 +526,7 @@ public class VertxImpl implements VertxInternal {
   }
 
   @Override
-  public Set<String> deployments() {
+  public Set<String> deploymentIDs() {
     return deploymentManager.deployments();
   }
 

@@ -421,7 +421,7 @@ public class Starter {
         "                               in the cluster started with the same HA group   \n" +
         "        -quorum                used in conjunction with -ha this specifies the \n" +
         "                               minimum number of nodes in the cluster for any  \n" +
-        "                               HA deployments to be active. Defaults to 0      \n" +
+        "                               HA deploymentIDs to be active. Defaults to 0      \n" +
         "        -hagroup               used in conjunction with -ha this specifies the \n" +
         "                               HA group this node will join. There can be      \n" +
         "                               multiple HA groups in a cluster. Nodes will only\n" +
