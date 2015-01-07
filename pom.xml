@@ -210,23 +210,6 @@
           </configuration>
         </plugin>
         <plugin>
-          <artifactId>maven-assembly-plugin</artifactId>
-          <executions>
-            <execution>
-              <id>assemble-html</id>
-              <phase>site</phase>
-              <goals>
-                <goal>single</goal>
-              </goals>
-              <configuration>
-                <descriptors>
-                  <descriptor>src/main/assembly/html.xml</descriptor>
-                </descriptors>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
           <artifactId>maven-clean-plugin</artifactId>
           <executions>
             <execution>
@@ -283,6 +266,44 @@
             <goals>
               <goal>javadoc</goal>
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>assemble-html</id>
+            <phase>site</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <attach>true</attach>
+              <descriptors>
+                <descriptor>src/main/assembly/html.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-install-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>install-html</id>
+            <phase>site</phase>
+            <goals>
+              <goal>install-file</goal>
+            </goals>
+            <configuration>
+              <file>${build.directory}/vertx-core-${project.version}-html.zip</file>
+              <groupId>io.vertx</groupId>
+              <artifactId>vertx-core</artifactId>
+              <classifier>html</classifier>
+              <packaging>zip</packaging>
+              <version>${project.version}</version>
+            </configuration>
           </execution>
         </executions>
       </plugin>
