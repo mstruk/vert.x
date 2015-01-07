@@ -212,6 +212,7 @@
  * * Waiting on a mutex or monitor (e.g. synchronized section)
  * * Doing a long lived database operation and waiting for a result
  * * Doing a complex calculation that takes some significant time.
+ * * Spinning in a loop
  *
  * If any of the above stop the event loop from doing anything else for a *significant amount of time* then you should
  * go immediately to the naughty step, and await further instructions.
