@@ -90,7 +90,7 @@
  * The {@link io.vertx.core.VertxOptions} object has many settings and allows you to configure things like clustering,
  * high availability, pool sizes and various other settings. The Javadoc describes all the settings in detail.
  *
- * === Creating a clustered Vertx object
+ * === Creating a clustered Vert.x object
  *
  * If you're creating a *clustered Vert.x* (A clustered Vert.x is one that looks out for other Vertx instances on the
  * network when it starts up, and if it finds them, it connects with them to form a distributed event bus), you
@@ -383,6 +383,12 @@
  * === High Availability
  *
  * Verticles can be deployed with High Availability (HA) enabled.
+ *
+ * === Verticle factories
+ *
+ * Configuring programmatically and via classpath.
+ *
+ * How are verticle identifiers used to find factories?
  *
  * == The Event Bus
  *

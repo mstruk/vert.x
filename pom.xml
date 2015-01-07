@@ -210,6 +210,23 @@
           </configuration>
         </plugin>
         <plugin>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>assemble-html</id>
+              <phase>site</phase>
+              <goals>
+                <goal>single</goal>
+              </goals>
+              <configuration>
+                <descriptors>
+                  <descriptor>src/main/assembly/html.xml</descriptor>
+                </descriptors>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
           <artifactId>maven-clean-plugin</artifactId>
           <executions>
             <execution>
@@ -269,6 +286,7 @@
           </execution>
         </executions>
       </plugin>
+
     </plugins>
     <resources>
       <resource>

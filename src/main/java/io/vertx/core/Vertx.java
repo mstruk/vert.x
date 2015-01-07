@@ -397,7 +397,6 @@ public interface Vertx extends Measured {
   @GenIgnore
   Set<VerticleFactory> verticleFactories();
 
-
   /**
    * Safely execute some blocking code.
    * <p>

@@ -22,7 +22,6 @@ import io.vertx.core.spi.cluster.ClusterManager;
 
 /**
  * Instances of this class are used to configure {@link io.vertx.core.Vertx} instances.
- * <p>
  * 
  * @author <a href="http://tfox.org">Tim Fox</a>
  */
@@ -69,12 +68,42 @@ public class VertxOptions {
    */
   public static final long DEFAULT_CLUSTER_PING_REPLY_INTERVAL = 20000;
 
+  /**
+   * The default value of blocked thread check period = 1000 ms.
+   */
   public static final long DEFAULT_BLOCKED_THREAD_CHECK_PERIOD = 1000;
+
+  /**
+   * The default value of max event loop execute time = 2000000000 ns (2 seconds)
+   */
   public static final long DEFAULT_MAX_EVENT_LOOP_EXECUTE_TIME = 2000l * 1000000;
+
+  /**
+   * The default value of max worker execute time = 60000000000 ns (60 seconds)
+   */
   public static final long DEFAULT_MAX_WORKER_EXECUTE_TIME = 60l * 1000 * 1000000;
+
+  /**
+   * The default value of quorum size = 1
+   */
   public static final int DEFAULT_QUORUM_SIZE = 1;
+
+  /**
+   * The default value of HA enabled = false
+   */
+  public static final boolean DEFAULT_HA_ENABLED = false;
+
+  /**
+   * The default value of metrics enabled false
+   */
   public static final boolean DEFAULT_METRICS_ENABLED = false;
+
+  /**
+   * The default value of JMX enabled = false
+   */
   public static final boolean DEFAULT_JMX_ENABLED = false;
+
+
 
   private int eventLoopPoolSize = DEFAULT_EVENT_LOOP_POOL_SIZE;
   private int workerPoolSize = DEFAULT_WORKER_POOL_SIZE;
@@ -88,7 +117,7 @@ public class VertxOptions {
   private long maxEventLoopExecuteTime = DEFAULT_MAX_EVENT_LOOP_EXECUTE_TIME;
   private long maxWorkerExecuteTime = DEFAULT_MAX_WORKER_EXECUTE_TIME;
   private ClusterManager clusterManager;
-  private boolean haEnabled;
+  private boolean haEnabled = DEFAULT_HA_ENABLED;
   private int quorumSize = DEFAULT_QUORUM_SIZE;
   private String haGroup;
   private boolean metricsEnabled = DEFAULT_METRICS_ENABLED;
@@ -337,7 +366,7 @@ public class VertxOptions {
   }
 
   /**
-   * Get the value of max event loop execute time, in ms.
+   * Get the value of max event loop execute time, in ns.
    * <p>
    * Vert.x will automatically log a warning if it detects that event loop threads haven't returned within this time.
    * <p>
@@ -351,7 +380,7 @@ public class VertxOptions {
   }
 
   /**
-   * Sets the value of max event loop execute time, in ms.
+   * Sets the value of max event loop execute time, in ns.
    *
    * @param maxEventLoopExecuteTime  the value of max event loop execute time, in ms.
    * @return a reference to this, so the API can be used fluently
@@ -365,7 +394,7 @@ public class VertxOptions {
   }
 
   /**
-   * Get the value of max worker execute time, in ms.
+   * Get the value of max worker execute time, in ns.
    * <p>
    * Vert.x will automatically log a warning if it detects that worker threads haven't returned within this time.
    * <p>
@@ -379,7 +408,7 @@ public class VertxOptions {
   }
 
   /**
-   * Sets the value of max worker execute time, in ms.
+   * Sets the value of max worker execute time, in ns.
    *
    * @param maxWorkerExecuteTime  the value of max worker execute time, in ms.
    * @return a reference to this, so the API can be used fluently
@@ -395,7 +424,7 @@ public class VertxOptions {
   /**
    * Get the cluster manager to be used when clustering.
    * <p>
-   * If the cluster manager has been programmatically set on this, then that will be used when clustering.
+   * If the cluster manager has been programmatically set here, then that will be used when clustering.
    * <p>
    * Otherwise Vert.x attempts to locate a cluster manager on the classpath.
    *
@@ -421,10 +450,23 @@ public class VertxOptions {
     return this;
   }
 
+  /**
+   * Get the value of internal blocking pool size.
+   * <p>
+   * Vert.x maintains a pool for internal blocking operations
+   *
+   * @return the value of internal blocking pool size
+   */
   public int getInternalBlockingPoolSize() {
     return internalBlockingPoolSize;
   }
 
+  /**
+   * Set the value of internal blocking pool size
+   *
+   * @param internalBlockingPoolSize the maximumn number of threads in the internal blocking pool
+   * @return a reference to this, so the API can be used fluently
+   */
   public VertxOptions setInternalBlockingPoolSize(int internalBlockingPoolSize) {
     if (internalBlockingPoolSize < 1) {
       throw new IllegalArgumentException("internalBlockingPoolSize must be > 0");
@@ -433,19 +475,41 @@ public class VertxOptions {
     return this;
   }
 
+  /**
+   * Will HA be enabled on the Vert.x instance?
+   *
+   * @return true if HA enabled, false otherwise
+   */
   public boolean isHAEnabled() {
     return haEnabled;
   }
 
+  /**
+   * Set whether HA will be enabled on the Vert.x instance.
+   *
+   * @param haEnabled  true if enabled, false if not.
+   * @return a reference to this, so the API can be used fluently
+   */
   public VertxOptions setHAEnabled(boolean haEnabled) {
     this.haEnabled = haEnabled;
     return this;
   }
 
+  /**
+   * Get the quorum size to be used when HA is enabled.
+   *
+   * @return  the quorum size
+   */
   public int getQuorumSize() {
     return quorumSize;
   }
 
+  /**
+   * Set the quorum size to be used when HA is enabled.
+   *
+   * @param quorumSize  the quorum size
+   * @return a reference to this, so the API can be used fluently
+   */
   public VertxOptions setQuorumSize(int quorumSize) {
     if (quorumSize < 1) {
       throw new IllegalArgumentException("quorumSize should be >= 1");
@@ -454,38 +518,82 @@ public class VertxOptions {
     return this;
   }
 
+  /**
+   * Get the HA group to be used when HA is enabled.
+   *
+   * @return the HA group
+   */
   public String getHAGroup() {
     return haGroup;
   }
 
+  /**
+   * Set the HA group to be used when HA is enabled.
+   *
+   * @param haGroup the HA group to use
+   * @return a reference to this, so the API can be used fluently
+   */
   public VertxOptions setHAGroup(String haGroup) {
     this.haGroup = haGroup;
     return this;
   }
 
+  /**
+   * Will metrics be enabled on the Vert.x instance?
+   *
+   * @return true if enabled, false if not.
+   */
+  public boolean isMetricsEnabled() {
+    return metricsEnabled;
+  }
+
+  /**
+   * Set whether metrics will be enabled on the Vert.x instance.
+   *
+   * @param enable true if metrics enabled, or false if not.
+   * @return a reference to this, so the API can be used fluently
+   */
   public VertxOptions setMetricsEnabled(boolean enable) {
     this.metricsEnabled = enable;
     return this;
   }
 
-  public boolean isMetricsEnabled() {
-    return metricsEnabled;
-  }
-
+  /**
+   * Will JMX be enabled on the Vert.x instance?
+   *
+   * @return true if enabled, false if not.
+   */
   public boolean isJmxEnabled() {
     return jmxEnabled;
   }
 
+  /**
+   * Set whether JMX will be enabled on the Vert.x instance.
+   *
+   * @param jmxEnabled true if JMX enabled, or false if not.
+   * @return a reference to this, so the API can be used fluently
+   */
   public VertxOptions setJmxEnabled(boolean jmxEnabled) {
     this.jmxEnabled = jmxEnabled;
     if (jmxEnabled) metricsEnabled = true;
     return this;
   }
 
+  /**
+   * Get the JMX domain to use when JMX metrics are enabled.
+   *
+   * @return the JMX domain
+   */
   public String getJmxDomain() {
     return jmxDomain;
   }
 
+  /**
+   * Set the JMX domain to use when JMX metrics are enabled.
+   *
+   * @param jmxDomain  the JMX domain
+   * @return a reference to this, so the API can be used fluently
+   */
   public VertxOptions setJmxDomain(String jmxDomain) {
     this.jmxDomain = jmxDomain;
     return this;
