@@ -15,29 +15,28 @@
  */
 
 /**
- * = Vert.x Core Guide
+ * = Vert.x Core Manual
  * :toc: right
  *
- * Vert.x - a Swiss Army Knife for creating reactive applications on the JVM.
+ * At the heart of Vert.x is a set of Java APIs that we call *Vert.x Core*
  *
- * At the heart of Vert.x is a set of Java APIs that we call *Vert.x core*.
+ * https://github.com/eclipse/vert.x[Repository].
  *
  * Vert.x core provides functionality for things like:
  *
- *
- * * TCP clients and servers
- * * HTTP clients and servers including websockets
- * * Event bus
- * * Shared data
+ * * Writing TCP clients and servers
+ * * Writing HTTP clients and servers including support for WebSockets
+ * * The Event bus
+ * * Shared data - local maps and clustered distributed maps
  * * Periodic and delayed actions
- * * Verticles
- * * UDP
- * * DNS
+ * * Deploying and undeploying Verticles
+ * * Datagram Sockets
+ * * DNS client
  * * File system access
  * * High availability
  * * Clustering
  *
- * The stuff in core is fairly low level - you won't find stuff like database access, authorisation or high level
+ * The functionality in core is fairly low level - you won't find stuff like database access, authorisation or high level
  * web functionality here - that kind of stuff you'll find in *Vert.x ext* (extensions).
  *
  * Vert.x core is small and lightweight. You just use the parts you want. It's also entirely embeddable in your
@@ -46,8 +45,8 @@
  *
  * You can use core from any of the other languages that Vert.x supports. But here'a a cool bit - we don't force
  * you to use the Java API directly from, say, JavaScript or Ruby - after all, different languages have different conventions
- * and idioms, and it would be weird to force Java idioms on Ruby developers (for example).
- * Instead, we automatically generate an *idiomatic* equivalent of the Core Java APIs for each language.
+ * and idioms, and it would be odd to force Java idioms on Ruby developers (for example).
+ * Instead, we automatically generate an *idiomatic* equivalent of the core Java APIs for each language.
  *
  * From now on we'll just use the word *core* to refer to Vert.x core.
  *
@@ -59,7 +58,7 @@
  *
  * You can't do much in Vert.x-land unless you can commune with a {@link io.vertx.core.Vertx} object!
  *
- * It's the control centre of Vert.x and is how you pretty much do everything, including creating clients and servers,
+ * It's the control centre of Vert.x and is how you do pretty much everything, including creating clients and servers,
  * getting a reference to the event bus, setting timers, as well as many other things.
  *
  * So how do you get an instance?
@@ -68,22 +67,14 @@
  *
  *  Vertx vertx = Vertx.vertx();
  *
- * For example, you might have a main class in which you create your Vert.x instance
- *
- * ----
- * public class HelloWorld {
- *   public static void main(String[] args) {
- *     Vertx vertx = Vertx.vertx();
- *   }
- * }
- * ----
+ * If you're using Verticles
  *
  * NOTE: Most applications will only need a single Vert.x instance, but it's possible to create multiple Vert.x instances if you
  * require, for example, isolation between the event bus or different groups of servers and clients.
  *
  * === Specifying options when creating a Vertx object
  *
- * When creating a Vertx object you can also specify options, if the defaults aren't right for you:
+ * When creating a Vertx object you can also specify options if the defaults aren't right for you:
  *
  *  Vertx vertx = Vertx.vertx(new VertxOptions().setWorkerPoolSize(40));
  *
@@ -92,26 +83,36 @@
  *
  * === Creating a clustered Vert.x object
  *
- * If you're creating a *clustered Vert.x* (A clustered Vert.x is one that looks out for other Vertx instances on the
- * network when it starts up, and if it finds them, it connects with them to form a distributed event bus), you
- * will normally use the asynchronous variant to create the Vertx object.
+ * If you're creating a *clustered Vert.x* (See the section on the <<event_bus, event bus>> for more information
+ * on clustering the event bus), then you will normally use the asynchronous variant to create the Vertx object.
  *
  * This is because it usually takes some time (maybe a few seconds) for the different Vert.x instances in a cluster to
- * group together. During that time, we don't want to block the
+ * group together. During that time, we don't want to block the calling thread, so we give the result to you asynchronously.
  *
  * == Are you fluent?
  *
- * You may have noticed that in the previous examples a *fluent* API was used. This is a common pattern throughout
- * Vert.x APIs, and you'll see it a lot.
+ * You may have noticed that in the previous examples a *fluent* API was used.
  *
- * It allows you to chain things together so you can write code that's a little bit less verbose. Of course, if you don't
- * like the fluent approach *we don't force you* to do it that way.
+ * A fluent API is where multiple methods calls can be chained together. For example:
  *
- * That's another common them in Vert.x - *we don't get pleasure from shoving things down your throat.*
+ *  new VertxOptions().setWorkerPoolSize(40).setEventLoopPoolSize(4).setClustered(true);
+ *
+ * This is a common pattern throughout Vert.x APIs, so get used to it.
+ *
+ * Chaining calls like this allows you to write code that's a little bit less verbose. Of course, if you don't
+ * like the fluent approach *we don't force you* to do it that way, you can happily ignore it if you prefer and write
+ * your code like this:
+ *
+ * ----
+ * VertxOptions options = new VertxOptions();
+ * options.setWorkerPoolSize(40);
+ * options.setEventLoopPoolSize(4);
+ * options.setClustered(true);
+ * ----
  *
  * == Don't call us, we'll call you.
  *
- * The Vert.x APIs are largely event driven. This means that when things happen in Vert.x that you are interested in,
+ * The Vert.x APIs are largely _event driven_. This means that when things happen in Vert.x that you are interested in,
  * Vert.x will call you by sending you events.
  *
  * Some example events are:
@@ -122,7 +123,7 @@
  * * an exception has occurred
  * * an HTTP server has received a request
  *
- * You handle events by providing *handlers* to the Vert.x APIs. For example to receive a timer event every second you
+ * You handle events by providing _handlers_ to the Vert.x APIs. For example to receive a timer event every second you
  * would do:
  *
  *  vertx.setTimer(1000, id -> System.out.println("This will be called every second"));
@@ -138,9 +139,9 @@
  *
  * == Don't block me, man!
  *
- * With very few exceptions (*), none of the APIs in Vert.x block the calling thread.
+ * With very few exceptions (i.e. some file system operations ending in 'Sync'), none of the APIs in Vert.x block the calling thread.
  *
- * If a result can be provided immediately, it can be returned immediately, otherwise you will usually provide a handler
+ * If a result can be provided immediately, it will be returned immediately, otherwise you will usually provide a handler
  * to receive events some time later.
  *
  * Because none of the Vert.x APIs block threads that means you can use Vert.x to handle a lot of concurrency using
@@ -166,7 +167,7 @@
  *
  * We mentioned before that Vert.x APIs are event driven - Vert.x passes events to handlers when they are available.
  *
- * In most cases (* worker verticles) Vert.x calls your handlers using a thread called an *event loop*.
+ * In most cases Vert.x calls your handlers using a thread called an *event loop*.
  *
  * As nothing in Vert.x or your application blocks, the event loop can merrily run around delivering events to different handlers in succession
  * as they arrive.
@@ -193,7 +194,8 @@
  * We call this pattern the *Multi-Reactor Pattern* to distinguish it from the single threaded reactor pattern.
  *
  * NOTE: Even though a Vertx instance maintains multiple event loops, any particular handler will never be executed
- * concurrently, and in most cases (* worker verticles) will always be called using the *exact same event loop*.
+ * concurrently, and in most cases (with the exception of <<worker_verticles, worker verticles>>) will always be called
+ * using the *exact same event loop*.
  *
  * == The Golden Rule - Don't Block an Event Loop
  *
@@ -267,18 +269,18 @@
  * });
  * ----
  *
- * An alternative way to run blocking code is to use a <<worker_verticles, Worker Verticle>>
+ * An alternative way to run blocking code is to use a <<worker_verticles, worker verticle>>
  *
  * == Verticles
  *
  * Vert.x can be used as a library by instantiating Vertx instances and using the core APIs to create servers, clients,
  * use the event bus and many other things.
  *
- * This is often the best route if you're embedding Vert.x in existing
- * applications that already has its own threading or deployment model, or maybe you'd just prefer to handle all
+ * This is often the best route if you're embedding Vert.x in an existing
+ * application that already has its own threading or deployment model. Or maybe you'd just prefer to handle all
  * that stuff yourself in your application for your own good reasons.
  *
- * However, Vert.x also comes with simple *actor-like* deployment and concurrency model that you can use to structure your
+ * However, Vert.x also comes with simple _actor-like_ deployment and concurrency model that you can use to structure your
  * application if you wish.
  *
  * *This model is entirely optional and Vert.x does not force you to create your applications in this way if you don't
@@ -289,8 +291,8 @@
  *
  * To use this model, you write your code as set of *verticles*.
  *
- * You can think of a verticle as a bit like an *actor* in the http://en.wikipedia.org/wiki/Actor_model[Actor Model].
- * A real application is probably composed of many verticle instances and they communicate with each other by sending messages
+ * You can think of a verticle as a bit like an actor in the http://en.wikipedia.org/wiki/Actor_model[Actor Model].
+ * A real application would typically be composed of many verticle instances communicating with each other by sending messages
  * over the <<event_bus, Event Bus>>.
  *
  * WARNING: Java specific
@@ -326,15 +328,15 @@
  *
  * === Verticle threading and concurrency
  *
- * Standard verticles are assigned an event loop thread when they are created and the +start+ method is called that
+ * Standard verticles are assigned an event loop thread when they are created and the +start+ method is called with that
  * event loop. When you call any other methods that takes a handler on a core API from an event loop then Vert.x
- * will guarantee that theose handlers, when called, will be executed on the same event loop.
+ * will guarantee that those handlers, when called, will be executed on the same event loop.
  *
  * This means we can guarantee that all the code in your verticle instance is always executed on the same event loop (as
  * long as you don't create your own threads and call it!).
  *
  * This means you can write all the code in your application as single threaded and let Vert.x worrying about the threading
- * and scaling. No more worrying about +synchronized+, +volatile+, and you have avoid many other cases of race conditions
+ * and scaling. No more worrying about +synchronized+ and +volatile+ any more, and you also avoid many other cases of race conditions
  * and deadlock so prevalent when doing hand-rolled 'traditional' multi-threaded application development.
  *
  * Here's an example Java verticle showing how different handlers will be called on the same event loop:
@@ -348,7 +350,7 @@
  *
  *     // Start a timer
  *     vertx.setTimer(1000, id -> {
- *       // This handler also called on same event loop
+ *       // This handler will also be called on same event loop
  *
  *       // Send a message to another verticle
  *       vertx.eventBus().send("foo", "hello");
@@ -356,7 +358,7 @@
  *
  *     // Create an HTTP server
  *     vertx.createHttpServer(new HttpServerOptions().setPort(8080).requestHandler(request -> {
- *       // This handler also called on same event loop
+ *       // This handler will also called on same event loop
  *     }).listen();
  *
  *   }
@@ -369,12 +371,13 @@
  *
  * === Accessing environment variables in a Verticle
  *
- * === Causing the container to exit
+ * === Causing Vert.x to exit
  *
  * === The Context object
  *
  * === Specifying number of verticle instances
  *
+ * [[worker_verticles]]
  * === Worker verticles
  *
  * ==== Multi-threaded worker verticles
@@ -391,6 +394,7 @@
  *
  * How are verticle identifiers used to find factories?
  *
+ * [[event_bus]]
  * == The Event Bus
  *
  * == TCP Clients and Servers
