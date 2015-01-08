@@ -137,7 +137,7 @@
  *
  * This leads us to some important concepts in Vert.x:
  *
- * == Don't block me, man!
+ * == Don't block me!
  *
  * With very few exceptions (i.e. some file system operations ending in 'Sync'), none of the APIs in Vert.x block the calling thread.
  *
@@ -197,7 +197,7 @@
  * concurrently, and in most cases (with the exception of <<worker_verticles, worker verticles>>) will always be called
  * using the *exact same event loop*.
  *
- * == The Golden Rule - Don't Block an Event Loop
+ * == The Golden Rule - *Don't Block an Event Loop*
  *
  * We already know that the Vert.x APIs are non blocking and won't block the event loop, but that's not much help if
  * you block the event loop *yourself* in a handler.
