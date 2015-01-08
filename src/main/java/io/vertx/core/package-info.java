@@ -65,7 +65,10 @@
  *
  * If you're embedding Vert.x then you simply create an instance as follows:
  *
- *  Vertx vertx = Vertx.vertx();
+ * [source,java]
+ * ----
+ * {@link examples.CoreExamples#example1}
+ * ----
  *
  * If you're using Verticles
  *
@@ -76,7 +79,10 @@
  *
  * When creating a Vertx object you can also specify options if the defaults aren't right for you:
  *
- *  Vertx vertx = Vertx.vertx(new VertxOptions().setWorkerPoolSize(40));
+ * [source,java]
+ * ----
+ * {@link examples.CoreExamples#example2}
+ * ----
  *
  * The {@link io.vertx.core.VertxOptions} object has many settings and allows you to configure things like clustering,
  * high availability, pool sizes and various other settings. The Javadoc describes all the settings in detail.
@@ -95,7 +101,10 @@
  *
  * A fluent API is where multiple methods calls can be chained together. For example:
  *
- *  new VertxOptions().setWorkerPoolSize(40).setEventLoopPoolSize(4).setClustered(true);
+ * [source,java]
+ * ----
+ * {@link examples.CoreExamples#example3}
+ * ----
  *
  * This is a common pattern throughout Vert.x APIs, so get used to it.
  *
@@ -103,11 +112,9 @@
  * like the fluent approach *we don't force you* to do it that way, you can happily ignore it if you prefer and write
  * your code like this:
  *
+ * [source,java]
  * ----
- * VertxOptions options = new VertxOptions();
- * options.setWorkerPoolSize(40);
- * options.setEventLoopPoolSize(4);
- * options.setClustered(true);
+ * {@link examples.CoreExamples#example4}
  * ----
  *
  * == Don't call us, we'll call you.
@@ -126,12 +133,17 @@
  * You handle events by providing _handlers_ to the Vert.x APIs. For example to receive a timer event every second you
  * would do:
  *
- *  vertx.setTimer(1000, id -> System.out.println("This will be called every second"));
+ * [source,java]
+ * ----
+ * {@link examples.CoreExamples#example5}
+ * ----
  *
  * Or to receive an HTTP request:
  *
- *  // Respond to each http request with "Hello World"
- *  server.requestHandler(request -> request.response().end("Hello World"));
+ * [source,java]
+ * ----
+ * {@link examples.CoreExamples#example6}
+ * ----
  *
  * Some time later when Vert.x has an event to pass to your handler Vert.x will call it *asynchronously*.
  *
@@ -259,24 +271,16 @@
  * It's done by calling {@link io.vertx.core.Vertx#executeBlocking} specifying both the blocking code to execute and a
  * result handler to be called back asynchronous when the blocking code has been executed.
  *
+ * [source,java]
  * ----
- * vertx.executeBlocking(future -> {
- *   // Call some blocking API that takes a significant amount of time to return
- *   String result = someAPI.blockingMethod("hello");
- *   future.setResult(result);
- * }, res -> {
- *   System.out.println("The result is: " + res.result());
- * });
+ * {@link examples.CoreExamples#example7}
  * ----
  *
  * An alternative way to run blocking code is to use a <<worker_verticles, worker verticle>>
  *
  * == Verticles
  *
- * Vert.x can be used as a library by instantiating Vertx instances and using the core APIs to create servers, clients,
- * use the event bus and many other things.
- *
- * This is often the best route if you're embedding Vert.x in an existing
+ * Vert.x is often used as a library in your applications, this is a common route if you're embedding Vert.x in an existing
  * application that already has its own threading or deployment model. Or maybe you'd just prefer to handle all
  * that stuff yourself in your application for your own good reasons.
  *
@@ -286,45 +290,30 @@
  * *This model is entirely optional and Vert.x does not force you to create your applications in this way if you don't
  * want to*.
  *
- * NOTE: This model does not claim to be a strict actor-model implementation, but it does share similarities especially
+ * The model does not claim to be a strict actor-model implementation, but it does share similarities especially
  * with respect to concurrency, scaling and deployment.
  *
- * To use this model, you write your code as set of *verticles*.
+ * To use this model, you write your code as set of *verticles*. Verticles are chunks of code that get deployed and
+ * run by Vert.x. Verticles can be written in any of the languages that Vert.x supports and a single application
+ * can include verticles written in multiple languages.
  *
  * You can think of a verticle as a bit like an actor in the http://en.wikipedia.org/wiki/Actor_model[Actor Model].
- * A real application would typically be composed of many verticle instances communicating with each other by sending messages
- * over the <<event_bus, Event Bus>>.
  *
- * WARNING: Java specific
+ * An application would typically be composed of many verticle instances running in the same Vert.x instance at the same
+ * time. The different verticle instances communicate with each other by sending messages on the <<event_bus, event bus>>.
  *
- * Verticles can be written in any of the languages that Vert.x supports. Here's an example in Java:
+ * include::verticles.adoc[]
  *
- * ----
- * public class MyVerticle extends AbstractVerticle {
+ * === Verticle Types
  *
- *   public void start() {
- *     System.out.println("Hello World");
- *   }
- * }
- * ----
+ * There are three different types of verticles:
  *
- * The verticle must have a +start+ method, and can optionally have a +stop+ method. The +start+ method is called when the
- * verticle is deployed, and the +stop+ method is called (if it exists) when the verticle is undeployed.
- *
- * === Deploying verticles programmatically
- *
- * You can deploy a verticle using one of the {@link io.vertx.core.Vertx#deployVerticle} methods, specifying the verticle
- * name, or you can pass in a verticle instance.
- *
- * === Deploying using a Verticle instance
- *
- * === Deploying specifying a Verticle name
- *
- * === Deploying verticles at the command line
- *
- * === Verticle asynchronous start
- *
- * === Undeploying verticles
+ * Standard Verticles:: These are the most common and useful type - they are always executed using an event loop thread.
+ * We'll discuss this more in the next section.
+ * Worker Verticles:: These run using a thread from the worker pool. An instance is never executed concurrently by more
+ * than one thread.
+ * Multi-threaded worker verticles:: These run using a thread from the worker pool. An instance can be executed concurrently by more
+ * than one thread.
  *
  * === Verticle threading and concurrency
  *
@@ -339,31 +328,22 @@
  * and scaling. No more worrying about +synchronized+ and +volatile+ any more, and you also avoid many other cases of race conditions
  * and deadlock so prevalent when doing hand-rolled 'traditional' multi-threaded application development.
  *
- * Here's an example Java verticle showing how different handlers will be called on the same event loop:
+ * === Deploying verticles programmatically
  *
- * ----
- * public class MyVerticle extends AbstractVerticle {
+ * You can deploy a verticle using one of the {@link io.vertx.core.Vertx#deployVerticle} methods, specifying a verticle
+ * identifier or you can pass in a verticle instance.
  *
- *   public void start() {
+ * === Deploying using a Verticle instance
  *
- *     // Start called on event loop here
+ * === Deploying specifying a Verticle name
  *
- *     // Start a timer
- *     vertx.setTimer(1000, id -> {
- *       // This handler will also be called on same event loop
+ * === Deploying verticles at the command line
  *
- *       // Send a message to another verticle
- *       vertx.eventBus().send("foo", "hello");
- *     });
+ * === Verticle asynchronous start
  *
- *     // Create an HTTP server
- *     vertx.createHttpServer(new HttpServerOptions().setPort(8080).requestHandler(request -> {
- *       // This handler will also called on same event loop
- *     }).listen();
+ * === Undeploying verticles
  *
- *   }
- * }
- * ----
+
  *
  * === Passing configuration to a verticle
  *
@@ -372,6 +352,8 @@
  * === Accessing environment variables in a Verticle
  *
  * === Causing Vert.x to exit
+ *
+ * Talk about preventing JVM from exiting.
  *
  * === The Context object
  *
