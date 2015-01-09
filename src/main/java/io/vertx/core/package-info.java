@@ -501,6 +501,43 @@
  *
  * Verticles can be deployed with High Availability (HA) enabled.
  *
+ * TODO
+ *
+ * === Running Verticles from the command line
+ *
+ * You can use Vert.x directly in your Maven or Gradle projects in the normal way by adding a dependency to the Vert.x
+ * core library and hacking from there.
+ *
+ * However you can also run Vert.x verticles directly from the command line if you wish.
+ *
+ * To do this you need to download and install a Vert.x distribution, and add the `bin` directory of the installation
+ * to your `PATH` environment variable. Also make sure you have a Java 8 JDK on your `PATH`.
+ *
+ * You can now run verticles by using the `vertx run` command. Here are some examples:
+ *
+ * ----
+ * # Run a JavaScript verticle
+ * vertx run my_verticle.js
+ *
+ * # Run a Ruby verticle
+ * vertx run a_n_other_verticle.rb
+ *
+ * # Run a Groovy script verticle, clustered
+ * vertx run FooVerticle.groovy -cluster
+ * ----
+ *
+ * You can even run Java source verticles without compiling them first!
+ *
+ * ----
+ * vertx run SomeJavaSourceFile.java
+ * ----
+ *
+ * Vert.x will compile the Java source file on the fly before running it. This is really useful for quickly
+ * prototyping verticles and great for demos. No need to set-up a Maven or Gradle build first to get going!
+ *
+ * For full information on the various options available when executing `vertx` on the command line,
+ * type `vertx` at the command line.
+ *
  * === Causing Vert.x to exit
  *
  * Threads maintained by Vert.x instances are not daemon threads so they will prevent the JVM from exiting.
@@ -513,9 +550,6 @@
  * === The Context object
  *
  * TODO
- *
- *
- *
  *
  * === Executing periodic and delayed actions
  *
@@ -563,17 +597,12 @@
  * ----
  * == Buffers
  *
- *
- *
- * == JSON
- *
- *
  * [[event_bus]]
  * == Getting a reference to the event bus
  *
- * Use {@link io.vertx.core.Vertx#eventBus} to get a reference to the link:eventbus.html[event bus].
+ * Use {@link io.vertx.core.Vertx#eventBus} to get a reference to the event bus.
  *
- * == TCP Clients and Servers
+ * The link:eventbus.html[event bus API manual] has full details on the API.
  *
  * == Creating HTTP Clients and Servers
  *
@@ -581,7 +610,7 @@
  *
  * You create {@link io.vertx.core.http.HttpServer} instances using the method {@link io.vertx.core.Vertx#createHttpServer}.
  *
- * The link:http.html[Core HTTP Manual] explains all about using HTTP with Vert.x
+ * The link:http.html[HTTP API Manual] explains all about using HTTP with Vert.x.
  *
  * == Shared Data
  *
