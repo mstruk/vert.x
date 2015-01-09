@@ -45,6 +45,17 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 /**
+ * A {@code main()} class that can be used to deploy verticles.
+ * <p>
+ * This class is used by the {@code vertx} command line utility to deploy verticles from the command line.
+ * <p>
+ * E.g.
+ * <p>
+ * {@code vertx run myverticle.js}
+ * <p>
+ * It can also be used as the main class of an executable jar so you can run verticles directly with:
+ * <p>
+ * {@code java -jar myapp.jar}
  *
  * @author <a href="http://tfox.org">Tim Fox</a>
  */

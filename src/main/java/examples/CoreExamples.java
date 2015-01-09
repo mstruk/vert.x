@@ -16,13 +16,14 @@
 
 package examples;
 
-import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Vertx;
-import io.vertx.core.VertxOptions;
+import io.vertx.core.*;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.json.JsonObject;
+
+import java.util.Arrays;
 
 /**
  * Created by tim on 08/01/15.
@@ -80,5 +81,99 @@ public class CoreExamples {
       return str;
     }
   }
+
+  public void example7_1(Vertx vertx) {
+    DeploymentOptions options = new DeploymentOptions().setWorker(true);
+    vertx.deployVerticle("com.mycompany.MyOrderProcessorVerticle", options);
+  }
+
+  public void example8(Vertx vertx) {
+
+    Verticle myVerticle = new MyVerticle();
+    vertx.deployVerticle(myVerticle);
+  }
+
+  class MyVerticle extends AbstractVerticle {
+
+    @Override
+    public void start() throws Exception {
+      super.start();
+    }
+  }
+
+  public void example9(Vertx vertx) {
+
+    // Deploy a Java verticle - the name is the fully qualified class name of the verticle class
+    vertx.deployVerticle("com.mycompany.MyOrderProcessorVerticle");
+
+    // Deploy a JavaScript verticle
+    vertx.deployVerticle("verticles/myverticle.js");
+
+    // Deploy a Ruby verticle verticle
+    vertx.deployVerticle("verticles/my_verticle.rb");
+
+  }
+
+  public void example10(Vertx vertx) {
+    vertx.deployVerticle("com.mycompany.MyOrderProcessorVerticle", res -> {
+      if (res.succeeded()) {
+        System.out.println("Deployment id is: " + res.result());
+      } else {
+        System.out.println("Deployment failed!");
+      }
+    });
+  }
+
+  public void example11(Vertx vertx, String deploymentID) {
+    vertx.undeploy(deploymentID, res -> {
+      if (res.succeeded()) {
+        System.out.println("Undeployed ok");
+      } else {
+        System.out.println("Undeploy failed!");
+      }
+    });
+  }
+
+  public void example12(Vertx vertx) {
+    DeploymentOptions options = new DeploymentOptions().setInstances(16);
+    vertx.deployVerticle("com.mycompany.MyOrderProcessorVerticle", options);
+  }
+
+
+  public void example13(Vertx vertx) {
+    JsonObject config = new JsonObject().put("name", "tim").put("directory", "/blah");
+    DeploymentOptions options = new DeploymentOptions().setConfig(config);
+    vertx.deployVerticle("com.mycompany.MyOrderProcessorVerticle", options);
+  }
+
+  public void example14(Vertx vertx) {
+    DeploymentOptions options = new DeploymentOptions().setIsolationGroup("mygroup");
+    options.setExtraClasspath(Arrays.asList("lib/jars/some-library.jar"));
+    vertx.deployVerticle("com.mycompany.MyIsolatedVerticle", options);
+  }
+
+  public void example15(Vertx vertx) {
+    long timerID = vertx.setTimer(1000, id -> {
+      System.out.println("And one second later this is printed");
+    });
+
+    System.out.println("First this is printed");
+  }
+
+  public void example16(Vertx vertx) {
+    long timerID = vertx.setPeriodic(1000, id -> {
+      System.out.println("And every second this is printed");
+    });
+
+    System.out.println("First this is printed");
+  }
+
+  public void example17(Vertx vertx, long timerID) {
+    vertx.cancelTimer(timerID);
+  }
+
+
+
+
 
 }

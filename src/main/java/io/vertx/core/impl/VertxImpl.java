@@ -473,8 +473,8 @@ public class VertxImpl implements VertxInternal {
   }
 
   @Override
-  public void deployVerticle(String identifier, Handler<AsyncResult<String>> completionHandler) {
-    deployVerticle(identifier, new DeploymentOptions(), completionHandler);
+  public void deployVerticle(String name, Handler<AsyncResult<String>> completionHandler) {
+    deployVerticle(name, new DeploymentOptions(), completionHandler);
   }
 
   @Override
@@ -488,21 +488,21 @@ public class VertxImpl implements VertxInternal {
   }
 
   @Override
-  public void deployVerticle(String identifier) {
-    deployVerticle(identifier, new DeploymentOptions(), null);
+  public void deployVerticle(String name) {
+    deployVerticle(name, new DeploymentOptions(), null);
   }
 
   @Override
-  public void deployVerticle(String identifier, DeploymentOptions options) {
-    deployVerticle(identifier, options, null);
+  public void deployVerticle(String name, DeploymentOptions options) {
+    deployVerticle(name, options, null);
   }
 
   @Override
-  public void deployVerticle(String identifier, DeploymentOptions options, Handler<AsyncResult<String>> completionHandler) {
+  public void deployVerticle(String name, DeploymentOptions options, Handler<AsyncResult<String>> completionHandler) {
     if (options.isHa() && haManager() != null) {
-      haManager().deployVerticle(identifier, options, completionHandler);
+      haManager().deployVerticle(name, options, completionHandler);
     } else {
-      deploymentManager.deployVerticle(identifier, options, completionHandler);
+      deploymentManager.deployVerticle(name, options, completionHandler);
     }
   }
 

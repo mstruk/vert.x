@@ -209,7 +209,8 @@
  * concurrently, and in most cases (with the exception of <<worker_verticles, worker verticles>>) will always be called
  * using the *exact same event loop*.
  *
- * == The Golden Rule - *Don't Block an Event Loop*
+ * [[golden_rule]]
+ * == The Golden Rule - *Don't Block the Event Loop*
  *
  * We already know that the Vert.x APIs are non blocking and won't block the event loop, but that's not much help if
  * you block the event loop *yourself* in a handler.
@@ -251,6 +252,7 @@
  * If you want to turn of these warnings or change the settings, you can do that in the
  * {@link io.vertx.core.VertxOptions} object before creating the Vertx object.
  *
+ * [[blocking_code]]
  * == Running blocking code
  *
  * In a perfect world, there will be no war or hunger, all APIs will be written asynchronously and bunny rabbits will
@@ -280,20 +282,18 @@
  *
  * == Verticles
  *
- * Vert.x is often used as a library in your applications, this is a common route if you're embedding Vert.x in an existing
- * application that already has its own threading or deployment model. Or maybe you'd just prefer to handle all
- * that stuff yourself in your application for your own good reasons.
- *
- * However, Vert.x also comes with simple _actor-like_ deployment and concurrency model that you can use to structure your
- * application if you wish.
+ * Vert.x comes with a simple, scalable, _actor-like_ deployment and concurrency model out of the box that
+ * you can use to save you writing your own.
  *
  * *This model is entirely optional and Vert.x does not force you to create your applications in this way if you don't
- * want to*.
+ * want to.*.
  *
  * The model does not claim to be a strict actor-model implementation, but it does share similarities especially
  * with respect to concurrency, scaling and deployment.
  *
- * To use this model, you write your code as set of *verticles*. Verticles are chunks of code that get deployed and
+ * To use this model, you write your code as set of *verticles*.
+ *
+ * Verticles are chunks of code that get deployed and
  * run by Vert.x. Verticles can be written in any of the languages that Vert.x supports and a single application
  * can include verticles written in multiple languages.
  *
@@ -315,7 +315,7 @@
  * Multi-threaded worker verticles:: These run using a thread from the worker pool. An instance can be executed concurrently by more
  * than one thread.
  *
- * === Verticle threading and concurrency
+ * === Standard verticles
  *
  * Standard verticles are assigned an event loop thread when they are created and the +start+ method is called with that
  * event loop. When you call any other methods that takes a handler on a core API from an event loop then Vert.x
@@ -328,60 +328,260 @@
  * and scaling. No more worrying about +synchronized+ and +volatile+ any more, and you also avoid many other cases of race conditions
  * and deadlock so prevalent when doing hand-rolled 'traditional' multi-threaded application development.
  *
- * === Deploying verticles programmatically
- *
- * You can deploy a verticle using one of the {@link io.vertx.core.Vertx#deployVerticle} methods, specifying a verticle
- * identifier or you can pass in a verticle instance.
- *
- * === Deploying using a Verticle instance
- *
- * === Deploying specifying a Verticle name
- *
- * === Deploying verticles at the command line
- *
- * === Verticle asynchronous start
- *
- * === Undeploying verticles
- *
-
- *
- * === Passing configuration to a verticle
- *
- * You can pass configuration
- *
- * === Accessing environment variables in a Verticle
- *
- * === Causing Vert.x to exit
- *
- * Talk about preventing JVM from exiting.
- *
- * === The Context object
- *
- * === Specifying number of verticle instances
- *
  * [[worker_verticles]]
  * === Worker verticles
  *
+ * A worker verticle is just like a standard verticle but it's executed not using an event loop, but using a thread from
+ * the Vert.x worker thread pool.
+ *
+ * Worker verticles are designed for calling blocking code, as they won't block any event loops.
+ *
+ * If you don't want to use a worker verticle to run blocking code, you can also run <<blocking_code, inline blocking code>>
+ * directly while on an event loop.
+ *
+ * If you want to deploy a verticle as a worker verticle you do that with {@link io.vertx.core.DeploymentOptions#setWorker}.
+ *
+ * [source,java]
+ * ----
+ * {@link examples.CoreExamples#example7_1}
+ * ----
+ *
+ * Worker verticle instances are never executed concurrently by Vert.x by more than one thread, but can executed by
+ * different threads at different times.
+ *
  * ==== Multi-threaded worker verticles
  *
+ * A multi-threaded worker verticle is just like a normal worker verticle but it *can* be executed concurrently by
+ * different threads.
+ *
+ * WARNING: Multi-threaded worker verticles are an advanced feature and most applications will have no need for them.
+ * Because of the concurrency in these verticles you have to be very careful to keep the verticle in a consistent state
+ * using standard Java techniques for multi-threaded programming.
+ *
+ * === Deploying verticles programmatically
+ *
+ * You can deploy a verticle using one of the {@link io.vertx.core.Vertx#deployVerticle} method, specifying a verticle
+ * name or you can pass in a verticle instance you have already created yourself.
+ *
+ * NOTE: Deploying Verticle *instances* is Java only.
+ *
+ * [source,java]
+ * ----
+ * {@link examples.CoreExamples#example8}
+ * ----
+ *
+ * You can also deploy verticles by specifying the verticle *name*.
+ *
+ * The verticle name is used to look up the specific {@link io.vertx.core.spi.VerticleFactory} that will be used to
+ * instantiate the actual verticle instance(s).
+ *
+ * Different verticle factories are available for instantiating verticles in different languages and for various other
+ * reasons such as loading services and getting verticles from Maven at run-time.
+ *
+ * This allows you to deploy verticles written in any language from any other language that Vert.x supports.
+ *
+ * Here's an example of deploying some different types of verticles:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.CoreExamples#example9}
+ * ----
+ *
+ * === Rules for mapping a verticle name to a verticle factory
+ *
+ * When deploying verticle(s) using a name, the name is used to select the actual verticle factory that will instantiate
+ * the verticle(s).
+ *
+ * Verticle names can have a prefix - which is a string followed by a colon, which if present will be used to look-up the factory, e.g.
+ *
+ *  js:foo.js // Use the JavaScript verticle factory
+ *  groovy:com.mycompany.SomeGroovyCompiledVerticle // Use the Groovy verticle factory
+ *  service:com.mycompany:myorderservice // Uses the service verticle factory
+ *
+ * If no prefix is present, Vert.x will look for a suffix and use that to lookup the factory, e.g.
+ *
+ *  foo.js // Will also use the JavaScript verticle factory
+ *  SomeScript.groovy // Will use the Groovy verticle factory
+ *
+ * If no prefix or suffix is present, Vert.x will assume it's a Java fully qualified class name (FQCN) and try
+ * and instantiate that.
+ *
+ * === How are Verticle Factories located?
+ *
+ * Most Verticle factories are loaded from the classpath and registered at Vert.x startup.
+ *
+ * You can also programmatically register and unregister verticle factories using {@link io.vertx.core.Vertx#registerVerticleFactory}
+ * and {@link io.vertx.core.Vertx#unregisterVerticleFactory} if you wish.
+ *
+ * === Waiting for deployment to complete
+ *
+ * Verticle deployment is asynchronous and may complete some time after the call to deploy has returned.
+ *
+ * If you want to be notified when deployment is complete you can deploy specifying a completion handler:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.CoreExamples#example10}
+ * ----
+ *
+ * The completion handler will be passed a result containing the deployment ID string, if deployment succeeded.
+ *
+ * This deployment ID can be used later if you want to undeploy the deployment.
+ *
+ * === Undeploying verticle deployments
+ *
+ * Deployments can be undeployed with {@link io.vertx.core.Vertx#undeploy}.
+ *
+ * Un-deployment is itself asynchronous so if you want to be notified when un-deployment is complete you can deploy specifying a completion handler:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.CoreExamples#example11}
+ * ----
+ *
+ * === Specifying number of verticle instances
+ *
+ * When deploying a verticle using a verticle name, you can specify the number of verticle instances that you
+ * want to deploy:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.CoreExamples#example12}
+ * ----
+ *
+ * This is useful for scaling easily across multiple cores. For example you might have a web-server verticle to deploy
+ * and multiple cores on your machine, so you want to deploy multiple instances to take utilise all the cores.
+ *
+ * === Passing configuration to a verticle
+ *
+ * Configuration in the form of JSON can be passed to a verticle at deployment time:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.CoreExamples#example13}
+ * ----
+ *
+ * This configuration is then available via the {@link io.vertx.core.Context} object.
+ *
+ * TODO
+ *
+ *
+ * === Accessing environment variables in a Verticle
+ *
+ * TODO
+ *
  * === Verticle Isolation Groups
+ *
+ * By default, Vert.x has a _flat classpath_. I.e, it does everything, including deploying verticles without messing
+ * with class-loaders. In the majority of cases this is the simplest, clearest and sanest thing to do.
+ *
+ * However, in some cases you may want to deploy a verticle so the classes of that verticle are isolated from others in
+ * your application.
+ *
+ * This might be the case, for example, if you want to deploy two different versions of a verticle with the same class name
+ * in the same Vert.x instance, or if you have two different verticles which use different versions of the same jar library.
+ *
+ * WARNING: Use this feature with caution. Class-loaders can be a can of worms, and can make debugging difficult, amongst
+ * other things.
+ *
+ * Here's an example of using an isolation group to isolate a verticle deployment.
+ *
+ * [source,java]
+ * ----
+ * {@link examples.CoreExamples#example14}
+ * ----
+ *
+ * Isolation groups are identified by a name, and the name can be used between different deployments if you want them
+ * to share an isolated class-loader.
+ *
+ * Extra classpath entries can also be provided with {@link io.vertx.core.DeploymentOptions#setExtraClasspath} so they
+ * can locate resources that are isolated to them.
  *
  * === High Availability
  *
  * Verticles can be deployed with High Availability (HA) enabled.
  *
- * === Verticle factories
+ * === Causing Vert.x to exit
  *
- * Configuring programmatically and via classpath.
+ * Threads maintained by Vert.x instances are not daemon threads so they will prevent the JVM from exiting.
  *
- * How are verticle identifiers used to find factories?
+ * If you are embedding Vert.x and you have finished with it, you can call {@link io.vertx.core.Vertx#close} to close it
+ * down.
+ *
+ * This will shut-down all internal thread pools and close other resources, and will allow the JVM to exit.
+ *
+ * === The Context object
+ *
+ * TODO
+ *
+ *
+ *
+ *
+ * === Executing periodic and delayed actions
+ *
+ * It's very common in Vert.x to want to perform an action after a delay, or periodically.
+ *
+ * In standard verticles you can't just make the thread sleep to introduce a delay, as that will block the event loop thread.
+ *
+ * Instead you use Vert.x timers. Timers can be *one-shot* or *periodic*. We'll discuss both
+ *
+ * ==== One-shot Timers
+ *
+ * A one shot timer calls an event handler after a certain delay, expressed in milliseconds.
+ *
+ * To set a timer to fire once you use {@link io.vertx.core.Vertx#setTimer} method passing in the delay and a handler
+ *
+ * [source,java]
+ * ----
+ * {@link examples.CoreExamples#example15}
+ * ----
+ *
+ * The return value is a unique timer id which can later be used to cancel the timer. The handler is also passed the timer id.
+ *
+ * ==== Periodic Timers
+ *
+ * You can also set a timer to fire periodically by using {@link io.vertx.core.Vertx#setPeriodic}.
+ *
+ * There will be an initial delay equal to the period.
+ *
+ * The return value of `setPeriodic` is a unique timer id (long). This can be later used if the timer needs to be cancelled.
+ *
+ * The argument passed into the timer event handler is also the unique timer id:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.CoreExamples#example16}
+ * ----
+ *
+ * ==== Cancelling timers
+ *
+ * To cancel a periodic timer, call {@link io.vertx.core.Vertx#cancelTimer} specifying the timer id. For example:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.CoreExamples#example17}
+ * ----
+ * == Buffers
+ *
+ *
+ *
+ * == JSON
+ *
  *
  * [[event_bus]]
- * == The Event Bus
+ * == Getting a reference to the event bus
+ *
+ * Use {@link io.vertx.core.Vertx#eventBus} to get a reference to the link:eventbus.html[event bus].
  *
  * == TCP Clients and Servers
  *
- * == HTTP Clients and Servers
+ * == Creating HTTP Clients and Servers
+ *
+ * You create {@link io.vertx.core.http.HttpClient} instances using the method {@link io.vertx.core.Vertx#createHttpClient}.
+ *
+ * You create {@link io.vertx.core.http.HttpServer} instances using the method {@link io.vertx.core.Vertx#createHttpServer}.
+ *
+ * The link:http.html[Core HTTP Manual] explains all about using HTTP with Vert.x
  *
  * == Shared Data
  *
@@ -389,32 +589,15 @@
  *
  * === Clustered Distributed Maps
  *
- * == Buffers
- *
- * == JSON
- *
- * == Timers - one shot and periodic
- *
  * == UDP
  *
  * == File System
  *
  * == DNS
  *
- *
- *
- *
- *
  * == Thread safety
  *
  * Notes on thread safety of Vert.x objects
- *
- *
- *
- *
- *
- *
- *
  *
  *
  */

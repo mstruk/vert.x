@@ -260,11 +260,13 @@ public interface Vertx extends Measured {
   void close(Handler<AsyncResult<Void>> completionHandler);
 
   /**
-   * Deploy a verticle instance that you have created yourself. Vert.x will assign the verticle a context and call the
-   * {@code start} method on the verticle. The actual deploy happens asynchronously and may not complete until after
-   * the call has returned.
+   * Deploy a verticle instance that you have created yourself.
+   * <p>
+   * Vert.x will assign the verticle a context and start the verticle.
+   * <p>
+   * The actual deploy happens asynchronously and may not complete until after the call has returned.
    *
-   * @param verticle  the instance to deploy.
+   * @param verticle  the verticle instance to deploy.
    */
   @GenIgnore
   void deployVerticle(Verticle verticle);
@@ -272,32 +274,32 @@ public interface Vertx extends Measured {
   /**
    * Like {@link #deployVerticle(Verticle)} but the completionHandler will be notified when the deployment is complete.
    * <p>
-   * If the deployment is successful the result will contain a String representing the unique deployment ID of the
+   * If the deployment is successful the result will contain a string representing the unique deployment ID of the
    * deployment.
    * <p>
    * This deployment ID can subsequently be used to undeploy the verticle.
    *
-   * @param verticle  the instance to deploy
+   * @param verticle  the verticle instance to deploy
    * @param completionHandler  a handler which will be notified when the deployment is complete
    */
   @GenIgnore
   void deployVerticle(Verticle verticle, Handler<AsyncResult<String>> completionHandler);
 
   /**
-   * Like {@link #deployVerticle(Verticle)} but {@link io.vertx.core.DeploymentOptions} are provided to tailor the
+   * Like {@link #deployVerticle(Verticle)} but {@link io.vertx.core.DeploymentOptions} are provided to configure the
    * deployment.
    *
-   * @param verticle  the instance to deploy
+   * @param verticle  the verticle instance to deploy
    * @param options  the deployment options.
    */
   @GenIgnore
   void deployVerticle(Verticle verticle, DeploymentOptions options);
 
   /**
-   * Like {@link #deployVerticle(Verticle, Handler)} but {@link io.vertx.core.DeploymentOptions} are provided to tailor the
+   * Like {@link #deployVerticle(Verticle, Handler)} but {@link io.vertx.core.DeploymentOptions} are provided to configure the
    * deployment.
    *
-   * @param verticle  the instance to deploy
+   * @param verticle  the verticle instance to deploy
    * @param options  the deployment options.
    * @param completionHandler  a handler which will be notified when the deployment is complete
    */
@@ -305,15 +307,15 @@ public interface Vertx extends Measured {
   void deployVerticle(Verticle verticle, DeploymentOptions options, Handler<AsyncResult<String>> completionHandler);
 
   /**
-   * Deploy a verticle instance given an identifier.
+   * Deploy a verticle instance given a name.
    * <p>
-   * Given the identifier, Vert.x selects a {@link VerticleFactory} instance to use to instantiate the verticle.
+   * Given the name, Vert.x selects a {@link VerticleFactory} instance to use to instantiate the verticle.
    * <p>
    * For the rules on how factories are selected please consult the user manual.
    *
-   * @param identifier  The identifier.
+   * @param name  the name.
    */
-  void deployVerticle(String identifier);
+  void deployVerticle(String name);
 
   /**
    * Like {@link #deployVerticle(String)} but the completionHandler will be notified when the deployment is complete.
@@ -323,31 +325,31 @@ public interface Vertx extends Measured {
    * <p>
    * This deployment ID can subsequently be used to undeploy the verticle.
    *
-   * @param identifier  The identifier
+   * @param name  The identifier
    * @param completionHandler  a handler which will be notified when the deployment is complete
    */
-  void deployVerticle(String identifier, Handler<AsyncResult<String>> completionHandler);
+  void deployVerticle(String name, Handler<AsyncResult<String>> completionHandler);
 
 
   /**
-   * Like {@link #deployVerticle(Verticle)} but {@link io.vertx.core.DeploymentOptions} are provided to tailor the
+   * Like {@link #deployVerticle(Verticle)} but {@link io.vertx.core.DeploymentOptions} are provided to configure the
    * deployment.
    *
-   * @param identifier  the identifier
+   * @param name  the name
    * @param options  the deployment options.
    */
-  void deployVerticle(String identifier, DeploymentOptions options);
+  void deployVerticle(String name, DeploymentOptions options);
 
   /**
-   * Like {@link #deployVerticle(String, Handler)} but {@link io.vertx.core.DeploymentOptions} are provided to tailor the
+   * Like {@link #deployVerticle(String, Handler)} but {@link io.vertx.core.DeploymentOptions} are provided to configure the
    * deployment.
    *
-   * @param identifier  the identifier
+   * @param name  the name
    * @param options  the deployment options.
    * @param completionHandler  a handler which will be notified when the deployment is complete
    */
   @GenIgnore
-  void deployVerticle(String identifier, DeploymentOptions options, Handler<AsyncResult<String>> completionHandler);
+  void deployVerticle(String name, DeploymentOptions options, Handler<AsyncResult<String>> completionHandler);
 
   /**
    * Undeploy a verticle deployment.
@@ -415,7 +417,5 @@ public interface Vertx extends Measured {
    */
   <T> void executeBlocking(Handler<Future<T>> blockingCodeHandler, Handler<AsyncResult<T>> resultHandler);
 
-
   static final VertxFactory factory = ServiceHelper.loadFactory(VertxFactory.class);
-
 }

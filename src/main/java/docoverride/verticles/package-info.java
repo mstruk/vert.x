@@ -19,7 +19,8 @@
  *
  * Verticle classes must implement the {@link io.vertx.core.Verticle} interface.
  *
- * They can implement it directly if you like but usually it's easier to extend the abstract class {@link io.vertx.core.AbstractVerticle}.
+ * They can implement it directly if you like but usually it's simpler to extend
+ * the abstract class {@link io.vertx.core.AbstractVerticle}.
  *
  * Here's an example verticle:
  *
@@ -50,7 +51,7 @@
  * Sometimes you want to do something in your verticle start-up which takes some time and you don't want the verticle to
  * be considered deployed until that happens. For example you might want to deploy other verticles in the start method.
  *
- * You can't block waiting for the other verticles to deploy in your start method as that would break the Golden Rule.
+ * You can't block waiting for the other verticles to deploy in your start method as that would break the <<golden_rule, Golden Rule>>.
  *
  * So how can you do this?
  *
