@@ -16,7 +16,7 @@
 
 /**
  * = Vert.x Core Manual
- * :toc: right
+ * :toc: left
  *
  * At the heart of Vert.x is a set of Java APIs that we call *Vert.x Core*
  *

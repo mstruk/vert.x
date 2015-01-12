@@ -1,6 +1,6 @@
 /**
  * = Vert.x Event Bus Manual
- * :toc: right
+ * :toc: left
  *
  * The {@link io.vertx.core.eventbus.EventBus event bus} is the *nervous system* of Vert.x.
  *
