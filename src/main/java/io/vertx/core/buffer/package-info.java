@@ -43,18 +43,21 @@
  * [source,java]
  * ----
  * {@link examples.BufferExamples#example2}
+ * ----
  *
  * Create a buffer from a String: The String will be encoded using the specified encoding, e.g:
  *
  * [source,java]
  * ----
  * {@link examples.BufferExamples#example3}
+ * ----
  *
  * Create a buffer from a byte[]
  *
  * [source,java]
  * ----
  * {@link examples.BufferExamples#example4}
+ * ----
  *
  * Create a buffer with an initial size hint. If you know your buffer will have a certain amount of data written to it
  * you can create the buffer and specify this size. This makes the buffer initially allocate that much memory and is
@@ -65,6 +68,7 @@
  * [source,java]
  * ----
  * {@link examples.BufferExamples#example5}
+ * ----
  *
  * == Writing to a Buffer
  *
@@ -82,6 +86,7 @@
  * [source,java]
  * ----
  * {@link examples.BufferExamples#example6}
+ * ----
  *
  * === Random access buffer writes
  *
@@ -94,6 +99,7 @@
  * [source,java]
  * ----
  * {@link examples.BufferExamples#example7}
+ * ----
  *
  * == Reading from a Buffer
  *
@@ -103,6 +109,7 @@
  * [source,java]
  * ----
  * {@link examples.BufferExamples#example8}
+ * ----
  *
  * == Buffer length
  *
@@ -121,8 +128,6 @@
  * == Buffer re-use
  *
  * After writing a buffer to a socket or other similar place, they cannot be re-used.
- *
- *
  *
  */
 @Document(fileName = "buffer.adoc")
