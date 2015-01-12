@@ -606,6 +606,10 @@
  *
  * The link:eventbus.html[event bus API manual] has full details on the API.
  *
+ * == JSON
+ *
+ * The link:json.html[json documentation] has full details on JSON support in Vert.x.
+ *
  * == Creating HTTP Clients and Servers
  *
  * You create {@link io.vertx.core.http.HttpClient} instances using the method {@link io.vertx.core.Vertx#createHttpClient}.
