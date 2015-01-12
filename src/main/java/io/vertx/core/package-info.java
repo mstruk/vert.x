@@ -597,6 +597,8 @@
  * ----
  * == Buffers
  *
+ * The link:buffer.html[buffer documentation] has full details on buffers.
+ *
  * [[event_bus]]
  * == Getting a reference to the event bus
  *

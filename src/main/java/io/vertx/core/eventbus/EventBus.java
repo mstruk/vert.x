@@ -220,7 +220,7 @@ public interface EventBus extends Measured {
    * Unregister a message codec.
    * <p>
    * @param name  the name of the codec
-   * @return @return a reference to this, so the API can be used fluently
+   * @return a reference to this, so the API can be used fluently
    */
   @GenIgnore
   EventBus unregisterCodec(String name);
