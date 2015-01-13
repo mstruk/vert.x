@@ -15,7 +15,7 @@
  */
 
 /**
- * = Buffers
+ * == Buffers
  * :toc: left
  *
  * Most data is shuffled around inside Vert.x using buffers.
@@ -23,7 +23,7 @@
  * A buffer is a sequence of zero or more bytes that can read from or written to and which expands automatically as
  * necessary to accommodate any bytes written to it. You can perhaps think of a buffer as smart byte array.
  *
- * == Creating buffers
+ * === Creating buffers
  *
  * Buffers can create by using one of the static {@link io.vertx.core.buffer.Buffer#buffer} methods.
  *
@@ -70,13 +70,13 @@
  * {@link examples.BufferExamples#example5}
  * ----
  *
- * == Writing to a Buffer
+ * === Writing to a Buffer
  *
  * There are two ways to write to a buffer: appending, and random access.
  * In either case buffers will always expand automatically to encompass the bytes. It's not possible to get
  * an {@code IndexOutOfBoundsException} with a buffer.
  *
- * === Appending to a Buffer
+ * ==== Appending to a Buffer
  *
  * To append to a buffer, you use the {@code appendXXX} methods.
  * Append methods exist for appending various different types.
@@ -88,7 +88,7 @@
  * {@link examples.BufferExamples#example6}
  * ----
  *
- * === Random access buffer writes
+ * ==== Random access buffer writes
  *
  * You can also write into the buffer at a specific index, by using the {@code setXXX} methods.
  * Set methods exist for various different data types. All the set methods take an index as the first argument - this
@@ -101,7 +101,7 @@
  * {@link examples.BufferExamples#example7}
  * ----
  *
- * == Reading from a Buffer
+ * === Reading from a Buffer
  *
  * Data is read from a buffer using the {@code getXXX} methods. Get methods exist for various datatypes.
  * The first argument to these methods is an index in the buffer from where to get the data.
@@ -111,26 +111,26 @@
  * {@link examples.BufferExamples#example8}
  * ----
  *
- * == Buffer length
+ * === Buffer length
  *
  * Use {@link io.vertx.core.buffer.Buffer#length} to obtain the length of the buffer.
  * The length of a buffer is the index of the byte in the buffer with the largest index + 1.
  *
- * == Copying buffers
+ * === Copying buffers
  *
  * Use {@link io.vertx.core.buffer.Buffer#copy} to make a copy of the buffer
  *
- * == Slicing buffers
+ * === Slicing buffers
  *
  * A sliced buffer is a new buffer which backs onto the original buffer, i.e. it does not copy the underlying data.
  * Use {@link io.vertx.core.buffer.Buffer#slice} to create a sliced buffers
  *
- * == Buffer re-use
+ * === Buffer re-use
  *
  * After writing a buffer to a socket or other similar place, they cannot be re-used.
  *
  */
-@Document(fileName = "buffer.adoc")
+@Document(fileName = "buffers.adoc")
 package io.vertx.core.buffer;
 
 import io.vertx.docgen.Document;

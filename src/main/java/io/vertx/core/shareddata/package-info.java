@@ -15,12 +15,12 @@
  */
 
 /**
- * == Using HTTP with Vert.x
+ * == Using Shared Data with Vert.x
  *
  * TODO
  */
-@Document(fileName = "http.adoc")
-package io.vertx.core.http;
+@Document(fileName = "shareddata.adoc")
+package io.vertx.core.shareddata;
 
 import io.vertx.docgen.Document;
 

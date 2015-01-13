@@ -1,5 +1,5 @@
 /**
- * = Vert.x Event Bus Manual
+ * == The Event Bus
  * :toc: left
  *
  * The {@link io.vertx.core.eventbus.EventBus event bus} is the *nervous system* of Vert.x.
@@ -20,9 +20,9 @@
  *
  * First some theory:
  *
- * == The Theory
+ * === The Theory
  *
- * === Addressing
+ * ==== Addressing
  *
  * Messages are sent on the event bus to an *address*.
  *
@@ -31,7 +31,7 @@
  *
  * Some examples of valid addresses are +europe.news.feed1+, +acme.games.pacman+, +sausages+, and +X+.
  *
- * === Handlers
+ * ==== Handlers
  *
  * Messages are received in handlers. You register a handler at an address.
  *
@@ -39,7 +39,7 @@
  *
  * A single handler can be registered at many different addresses.
  *
- * === Publish / subscribe messaging
+ * ==== Publish / subscribe messaging
  *
  * The event bus supports *publishing* messages.
  *
@@ -48,7 +48,7 @@
  *
  * This is the familiar *publish/subscribe* messaging pattern.
  *
- * === Point to point and Request-Response messaging
+ * ==== Point to point and Request-Response messaging
  *
  * The event bus also supports *point to point* messaging.
  *
@@ -67,7 +67,7 @@
  *
  * This is a common messaging pattern called the *request-response* pattern.
  *
- * === Best-effort delivery
+ * ==== Best-effort delivery
  *
  * Vert.x does it's best to deliver messages and won't consciously throw them away. This is called *best-effort* delivery.
  *
@@ -76,7 +76,7 @@
  * If your application cares about lost messages, you should code your handlers to be idempotent, and your senders
  * to retry after recovery.
  *
- * === Types of messages
+ * ==== Types of messages
  *
  * Out of the box Vert.x allows any primitive/simple type, String, or {@link io.vertx.core.buffer.Buffer buffers} to
  * be sent as messages.
@@ -91,11 +91,11 @@
  * The event bus is very flexible and also supports supports sending arbitrary objects over the event bus.
  * You do this by defining a {@link io.vertx.core.eventbus.MessageCodec codec} for the objects you want to send.
  *
- * == The Event Bus API
+ * === The Event Bus API
  *
  * Let's jump into the API
  *
- * === Registering Handlers
+ * ==== Registering Handlers
  *
  * This simplest way to register a handler is using {@link io.vertx.core.eventbus.EventBus#consumer(String, io.vertx.core.Handler)}.
  * Here's an example:
@@ -130,7 +130,7 @@
  * {@link examples.EventBusExamples#example3}
  * ----
  *
- * === Un-registering Handlers
+ * ==== Un-registering Handlers
  *
  * To unregister a handler, call {@link io.vertx.core.eventbus.MessageConsumer#unregister}.
  *
@@ -142,7 +142,7 @@
  * {@link examples.EventBusExamples#example4}
  * ----
  *
- * === Publishing messages
+ * ==== Publishing messages
  *
  * Publishing a message is simple. Just use {@link io.vertx.core.eventbus.EventBus#publish} specifying the
  * address to publish it to.
@@ -154,7 +154,7 @@
  *
  * That message will then be delivered to all handlers registered against the address +news.uk.sport+.
  *
- * === Sending messages
+ * ==== Sending messages
  *
  * Sending a message will result in only one handler registered at the address receiving the message.
  * This is the point to point messaging pattern. The handler is chosen in a non-strict round-robin fashion.
@@ -166,7 +166,7 @@
  * {@link examples.EventBusExamples#example6}
  * ----
  *
- * === Setting headers on messages
+ * ==== Setting headers on messages
  *
  * Messages sent over the event bus can also contain headers. This can be specified by providing a
  * {@link io.vertx.core.eventbus.DeliveryOptions} when sending or publishing:
@@ -176,7 +176,7 @@
  * {@link examples.EventBusExamples#example7}
  * ----
  *
- * === The Message object
+ * ==== The Message object
  *
  * The object you receive in a message handler is a {@link io.vertx.core.eventbus.Message}.
  *
@@ -184,7 +184,7 @@
  *
  * The headers of the message are available with {@link io.vertx.core.eventbus.Message#headers}.
  *
- * === Replying to messages
+ * ==== Replying to messages
  *
  * Sometimes after you send a message you want to receive a reply from the recipient.
  * This is known as the *request-response pattern*.
@@ -211,11 +211,10 @@
  * {@link examples.EventBusExamples#example9}
  * ----
  *
- *
  * The replies themselves can also be replied to so you can create a dialog between two different parties
  * consisting of multiple rounds.
  *
- * ## Sending with timeouts
+ * ==== Sending with timeouts
  *
  * When sending a message with a reply handler you can specify a timeout in the {@link io.vertx.core.eventbus.DeliveryOptions}.
  *
@@ -223,7 +222,7 @@
  *
  * The default timeout is 30 seconds.
  *
- * ## Send Failures
+ * ==== Send Failures
  *
  * Message sends can fail for other reasons, including:
  *
@@ -232,7 +231,7 @@
  *
  * In all cases the reply handler will be called with the specific failure.
  *
- * ## Message Codecs
+ * ==== Message Codecs
  *
  * You can send any object you like across the event bus if you define and register a {@link io.vertx.core.eventbus.MessageCodec message codec} for it.
  *
@@ -257,7 +256,7 @@
  * Message codecs don't always have to encode and decode as the same type. For example you can write a codec that
  * allows a MyPOJO class to be sent, but when that message is sent to a handler it arrives as a MyOtherPOJO class.
  *
- * ## Clustered Event Bus
+ * ==== Clustered Event Bus
  *
  * The event bus doesn't just exist in a single Vert.x instance. By clustering different Vert.x instances together on
  * your network they can form a single, distributed, event bus.

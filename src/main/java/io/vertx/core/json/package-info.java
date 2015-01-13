@@ -15,13 +15,13 @@
  */
 
 /**
- * = JSON
+ * == JSON
  * :toc: left
  *
  * Unlike some other languages, Java does not have first class support for http://json.org/[JSON] so we provide
  * two classes to make handling JSON in your Vert.x applications a bit easier.
  *
- * == JSON objects
+ * === JSON objects
  *
  * The {@link io.vertx.core.json.JsonObject} class represents JSON objects.
  *
@@ -30,7 +30,7 @@
  *
  * JSON objects also support null values.
  *
- * === Creating JSON objects
+ * ==== Creating JSON objects
  *
  * Empty JSON objects can be created with the default constructor.
  *
@@ -41,7 +41,7 @@
  * {@link examples.JsonExamples#example0_1}
  * ----
  *
- * === Putting entries into a JSON object
+ * ==== Putting entries into a JSON object
  *
  * Use the {@link io.vertx.core.json.JsonObject#put} methods to put values into the JSON object.
  *
@@ -52,7 +52,7 @@
  * {@link examples.JsonExamples#example1}
  * ----
  *
- * === Getting values from a JSON object
+ * ==== Getting values from a JSON object
  *
  * You get values from a JSON object using the {@code getXXX} methods, for example:
  *
@@ -61,13 +61,11 @@
  * {@link examples.JsonExamples#example2}
  * ----
  *
- * === Encoding the JSON object to a String
+ * ==== Encoding the JSON object to a String
  *
  * You use {@link io.vertx.core.json.JsonObject#encode} to encode the object to a String form.
  *
- *
- *
- * == JSON arrays
+ * === JSON arrays
  *
  * The {@link io.vertx.core.json.JsonArray} class represents JSON arrays.
  *
@@ -75,7 +73,7 @@
  *
  * JSON arrays can also contain null values.
  *
- * === Creating JSON arrays
+ * ==== Creating JSON arrays
  *
  * Empty JSON arrays can be created with the default constructor.
  *
@@ -86,7 +84,7 @@
  * {@link examples.JsonExamples#example0_2}
  * ----
  *
- * === Adding entries into a JSON array
+ * ==== Adding entries into a JSON array
  *
  * You add entries to a JSON array using the {@link io.vertx.core.json.JsonArray#add} methods.
  *
@@ -95,7 +93,7 @@
  * {@link examples.JsonExamples#example3}
  * ----
  *
- * === Getting values from a JSON array
+ * ==== Getting values from a JSON array
  *
  * You get values from a JSON array using the {@code getXXX} methods, for example:
  *
@@ -104,7 +102,7 @@
  * {@link examples.JsonExamples#example4}
  * ----
  *
- * === Encoding the JSON array to a String
+ * ==== Encoding the JSON array to a String
  *
  * You use {@link io.vertx.core.json.JsonArray#encode} to encode the array to a String form.
  *

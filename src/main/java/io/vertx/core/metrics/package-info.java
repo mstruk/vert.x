@@ -15,12 +15,12 @@
  */
 
 /**
- * == Using HTTP with Vert.x
+ * == Metrics
  *
- * TODO
+ *
  */
-@Document(fileName = "http.adoc")
-package io.vertx.core.http;
+@Document(fileName = "metrics.adoc")
+package io.vertx.core.metrics;
 
 import io.vertx.docgen.Document;
 

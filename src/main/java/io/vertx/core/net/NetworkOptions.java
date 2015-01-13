@@ -56,6 +56,11 @@ public abstract class NetworkOptions {
     trafficClass = DEFAULT_TRAFFIC_CLASS;
   }
 
+  /**
+   * Return the TCP send buffer size, in bytes.
+   *
+   * @return the send buffer size
+   */
   public int getSendBufferSize() {
     return sendBufferSize;
   }

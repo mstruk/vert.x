@@ -15,12 +15,12 @@
  */
 
 /**
- * == Using HTTP with Vert.x
+ * == Using TCP with Vert.x
  *
  * TODO
  */
-@Document(fileName = "http.adoc")
-package io.vertx.core.http;
+@Document(fileName = "net.adoc")
+package io.vertx.core.net;
 
 import io.vertx.docgen.Document;
 

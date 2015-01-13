@@ -15,12 +15,10 @@
  */
 
 /**
- * == Using HTTP with Vert.x
- *
- * TODO
+ * == DNS client
  */
-@Document(fileName = "http.adoc")
-package io.vertx.core.http;
+@Document(fileName = "dns.adoc")
+package io.vertx.core.dns;
 
 import io.vertx.docgen.Document;
 

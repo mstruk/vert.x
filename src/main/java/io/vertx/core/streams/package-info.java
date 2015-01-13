@@ -154,7 +154,7 @@
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-@Document
+@Document(fileName = "streams.adoc")
 package io.vertx.core.streams;
 
 import io.vertx.docgen.Document;

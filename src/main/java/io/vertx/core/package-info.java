@@ -595,40 +595,31 @@
  * ----
  * {@link examples.CoreExamples#example17}
  * ----
- * == Buffers
- *
- * The link:buffer.html[buffer documentation] has full details on buffers.
  *
  * [[event_bus]]
- * == Getting a reference to the event bus
+ * include::eventbus.adoc[]
  *
- * Use {@link io.vertx.core.Vertx#eventBus} to get a reference to the event bus.
+ * include::json.adoc[]
  *
- * The link:eventbus.html[event bus API manual] has full details on the API.
+ * include::buffers.adoc[]
  *
- * == JSON
+ * include::net.adoc[]
  *
- * The link:json.html[json documentation] has full details on JSON support in Vert.x.
+ * include::http.adoc[]
  *
- * == Creating HTTP Clients and Servers
+ * include::shareddata.adoc[]
  *
- * You create {@link io.vertx.core.http.HttpClient} instances using the method {@link io.vertx.core.Vertx#createHttpClient}.
+ * include::filesystem.adoc[]
  *
- * You create {@link io.vertx.core.http.HttpServer} instances using the method {@link io.vertx.core.Vertx#createHttpServer}.
+ * include::datagrams.adoc[]
  *
- * The link:http.html[HTTP API Manual] explains all about using HTTP with Vert.x.
+ * include::dns.adoc[]
  *
- * == Shared Data
+ * include::metrics.adoc[]
  *
- * === Local Shared Data
+ * include::streams.adoc[]
  *
- * === Clustered Distributed Maps
- *
- * == UDP
- *
- * == File System
- *
- * == DNS
+ * include::parsetools.adoc[]
  *
  * == Thread safety
  *

@@ -15,12 +15,12 @@
  */
 
 /**
- * == Using HTTP with Vert.x
+ * == Parse tools
  *
  * TODO
  */
-@Document(fileName = "http.adoc")
-package io.vertx.core.http;
+@Document(fileName = "parsetools.adoc")
+package io.vertx.core.parsetools;
 
 import io.vertx.docgen.Document;
 

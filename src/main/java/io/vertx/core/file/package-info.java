@@ -15,12 +15,12 @@
  */
 
 /**
- * == Using HTTP with Vert.x
+ * == Using the file system with Vert.x
  *
  * TODO
  */
-@Document(fileName = "http.adoc")
-package io.vertx.core.http;
+@Document(fileName = "filesystem.adoc")
+package io.vertx.core.file;
 
 import io.vertx.docgen.Document;
 

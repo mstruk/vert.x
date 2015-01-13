@@ -15,12 +15,10 @@
  */
 
 /**
- * == Using HTTP with Vert.x
- *
- * TODO
+ * == Datagram sockets (UDP)
  */
-@Document(fileName = "http.adoc")
-package io.vertx.core.http;
+@Document(fileName = "datagrams.adoc")
+package io.vertx.core.datagram;
 
 import io.vertx.docgen.Document;
 
