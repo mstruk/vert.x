@@ -27,6 +27,8 @@ import java.util.List;
 
 /**
  * Provides a way to asynchronously lookup information from DNS servers.
+ * <p>
+ * Please consult the documentation for more information on DNS clients.
  *
  * @author <a href="mailto:nmaurer@redhat.com">Norman Maurer</a>
  */

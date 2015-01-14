@@ -32,7 +32,7 @@ import java.nio.ByteBuffer;
  * A buffer is a sequence of zero or more bytes that can read from or written to and which expands automatically as
  * necessary to accommodate any bytes written to it. You can perhaps think of a buffer as smart byte array.
  * <p>
- * Please consult the documentation for a detailed explanation of buffers.
+ * Please consult the documentation for more information on buffers.
  *
  * @author <a href="http://tfox.org">Tim Fox</a>
  */

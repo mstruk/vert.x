@@ -39,6 +39,8 @@ import io.vertx.core.spi.PumpFactory;
  * This class can be used to pump from any {@link ReadStream} to any {@link WriteStream},
  * e.g. from an {@link io.vertx.core.http.HttpServerRequest} to an {@link io.vertx.core.file.AsyncFile},
  * or from {@link io.vertx.core.net.NetSocket} to a {@link io.vertx.core.http.WebSocket}.
+ * <p>
+ * Please see the documentation for more information.
  *
  * @author <a href="http://tfox.org">Tim Fox</a>
  */

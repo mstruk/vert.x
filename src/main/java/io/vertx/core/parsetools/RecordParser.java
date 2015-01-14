@@ -51,6 +51,7 @@ import java.util.Objects;
  * Instances of this class can't currently be used for protocols where the text is encoded with something other than
  * a 1-1 byte-char mapping.
  * <p>
+ * Please see the documentation for more information.
  *
  * @author <a href="http://tfox.org">Tim Fox</a>
  */

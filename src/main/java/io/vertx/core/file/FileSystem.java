@@ -36,6 +36,8 @@ import java.util.List;
  * can return quickly, which is why we provide them, but it's highly recommended that you test how long they take to
  * return in your particular application before using them on an event loop.
  * <p>
+ * Please consult the documentation for more information on file system support.
+ *
  *
  * @author <a href="http://tfox.org">Tim Fox</a>
  */

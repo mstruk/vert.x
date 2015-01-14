@@ -34,7 +34,7 @@ import java.util.stream.Stream;
  * Unlike some other languages Java does not have a native understanding of JSON. To enable JSON to be used easily
  * in Vert.x code we use this class to encapsulate the notion of a JSON array.
  * <p>
- * Please see the documentation for a more detailed explanation.
+ * Please see the documentation for more information.
  *
  * @author <a href="http://tfox.org">Tim Fox</a>
  */

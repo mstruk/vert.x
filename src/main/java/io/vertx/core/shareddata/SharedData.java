@@ -30,6 +30,8 @@ import io.vertx.core.Handler;
  *   <li>Cluster wide counters used to maintain counts consistently across the cluster</li>
  *   <li>Local maps for sharing data safely in the same Vert.x instance</li>
  * </ul>
+ * <p>
+ * Please see the documentation for more information.
  *
  * @author <a href="http://tfox.org">Tim Fox</a>
  */

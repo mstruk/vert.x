@@ -35,6 +35,8 @@ import io.vertx.core.streams.WriteStream;
  * when sending data.
  * <p>
  * You can send data to ipv4 or ipv6 addresses, which also include multicast addresses.
+ * <p>
+ * Please consult the documentation for more information on datagram sockets.
  *
  * @author <a href="mailto:nmaurer@redhat.com">Norman Maurer</a>
  */

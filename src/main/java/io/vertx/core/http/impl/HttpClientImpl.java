@@ -31,7 +31,6 @@ import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpContentDecompressor;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.LastHttpContent;
-import io.netty.handler.codec.http.websocketx.WebSocketVersion;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.vertx.core.Future;
@@ -139,6 +138,26 @@ public class HttpClientImpl implements HttpClient {
   }
 
   @Override
+  public HttpClient connectWebsocket(String requestURI, Handler<WebSocket> wsConnect) {
+    return connectWebsocket(options.getDefaultPort(), options.getDefaultHost(), requestURI, wsConnect);
+  }
+
+  @Override
+  public HttpClient connectWebsocket(String requestURI, MultiMap headers, Handler<WebSocket> wsConnect) {
+    return connectWebsocket(options.getDefaultPort(), options.getDefaultHost(), requestURI, headers, wsConnect);
+  }
+
+  @Override
+  public HttpClient connectWebsocket(String requestURI, MultiMap headers, WebsocketVersion version, Handler<WebSocket> wsConnect) {
+    return connectWebsocket(options.getDefaultPort(), options.getDefaultHost(), requestURI, headers, version, wsConnect);
+  }
+
+  @Override
+  public HttpClient connectWebsocket(String requestURI, MultiMap headers, WebsocketVersion version, String subProtocols, Handler<WebSocket> wsConnect) {
+    return connectWebsocket(options.getDefaultPort(), options.getDefaultHost(), requestURI, headers, version, subProtocols, wsConnect);
+  }
+
+  @Override
   public WebSocketStream websocket(int port, String host, String requestURI) {
     return websocket(port, host, requestURI, null, null);
   }
@@ -157,6 +176,26 @@ public class HttpClientImpl implements HttpClient {
   public WebSocketStream websocket(int port, String host, String requestURI, MultiMap headers, WebsocketVersion version,
                                           String subProtocols) {
     return new WebSocketStreamImpl(port, host, requestURI, headers, version, subProtocols);
+  }
+
+  @Override
+  public WebSocketStream websocket(String requestURI) {
+    return websocket(options.getDefaultPort(), options.getDefaultHost(), requestURI);
+  }
+
+  @Override
+  public WebSocketStream websocket(String requestURI, MultiMap headers) {
+    return websocket(options.getDefaultPort(), options.getDefaultHost(), requestURI, headers);
+  }
+
+  @Override
+  public WebSocketStream websocket(String requestURI, MultiMap headers, WebsocketVersion version) {
+    return websocket(options.getDefaultPort(), options.getDefaultHost(), requestURI, headers, version);
+  }
+
+  @Override
+  public WebSocketStream websocket(String requestURI, MultiMap headers, WebsocketVersion version, String subProtocols) {
+    return websocket(options.getDefaultPort(), options.getDefaultHost(), requestURI, headers, version, subProtocols);
   }
 
   private class WebSocketStreamImpl implements WebSocketStream {
@@ -235,9 +274,9 @@ public class HttpClientImpl implements HttpClient {
   }
 
   @Override
-  public HttpClientRequest request(HttpMethod method, String absoluteURI, Handler<HttpClientResponse> responseHandler) {
+  public HttpClientRequest requestAbs(HttpMethod method, String absoluteURI, Handler<HttpClientResponse> responseHandler) {
     Objects.requireNonNull(responseHandler, "no null responseHandler accepted");
-    return request(method, absoluteURI).handler(responseHandler);
+    return requestAbs(method, absoluteURI).handler(responseHandler);
   }
 
   @Override
@@ -247,7 +286,17 @@ public class HttpClientImpl implements HttpClient {
   }
 
   @Override
-  public HttpClientRequest request(HttpMethod method, String absoluteURI) {
+  public HttpClientRequest request(HttpMethod method, String requestURI) {
+    return request(method, options.getDefaultPort(), options.getDefaultHost(), requestURI);
+  }
+
+  @Override
+  public HttpClientRequest request(HttpMethod method, String requestURI, Handler<HttpClientResponse> responseHandler) {
+    return request(method, options.getDefaultPort(), options.getDefaultHost(), requestURI, responseHandler);
+  }
+
+  @Override
+  public HttpClientRequest requestAbs(HttpMethod method, String absoluteURI) {
     URL url = parseUrl(absoluteURI);
     return doRequest(method, url.getHost(), url.getPort(), url.getPath(), null);
   }

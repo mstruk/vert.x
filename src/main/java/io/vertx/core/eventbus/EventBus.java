@@ -32,8 +32,7 @@ import io.vertx.core.streams.WriteStream;
  * <p>
  * Message delivery is best-effort and messages can be lost if failure of all or part of the event bus occurs.
  * <p>
- * Please refer to the documentation for a detailed explanation of the event bus.
- * <p>
+ * Please refer to the documentation for more information on the event bus.
  *
  * @author <a href="http://tfox.org">Tim Fox</a>
  */
