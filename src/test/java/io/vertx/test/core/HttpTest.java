@@ -2535,7 +2535,7 @@ public class HttpTest extends HttpTestBase {
     server = vertx.createHttpServer(new HttpServerOptions().setIdleTimeout(1).setPort(DEFAULT_HTTP_PORT).setHost(DEFAULT_HTTP_HOST));
     server.websocketHandler(ws -> {}).listen(ar -> {
       assertTrue(ar.succeeded());
-      client.connectWebsocket(DEFAULT_HTTP_PORT, DEFAULT_HTTP_HOST, "/", ws -> {
+      client.websocket(DEFAULT_HTTP_PORT, DEFAULT_HTTP_HOST, "/", ws -> {
         ws.closeHandler(v -> testComplete());
       });
     });
@@ -2549,7 +2549,7 @@ public class HttpTest extends HttpTestBase {
     client.close();
     client = vertx.createHttpClient(new HttpClientOptions().setIdleTimeout(1));
     server.websocketHandler(ws -> {}).listen(ar -> {
-      client.connectWebsocket(DEFAULT_HTTP_PORT, DEFAULT_HTTP_HOST, "/", ws -> {
+      client.websocket(DEFAULT_HTTP_PORT, DEFAULT_HTTP_HOST, "/", ws -> {
         ws.closeHandler(v -> testComplete());
       });
 
@@ -3091,7 +3091,7 @@ public class HttpTest extends HttpTestBase {
   @Test
   public void testRemoteAddress() {
     server.requestHandler(req -> {
-      assertEquals("127.0.0.1", req.remoteAddress().hostAddress());
+      assertEquals("127.0.0.1", req.remoteAddress().host());
       req.response().end();
     });
 

@@ -68,7 +68,7 @@ public class HttpServerResponseImpl implements HttpServerResponse {
   private boolean written;
   private Handler<Void> drainHandler;
   private Handler<Throwable> exceptionHandler;
-  private Handler<Void> closeHandler;
+  //private Handler<Void> closeHandler;
   private Handler<Void> headersEndHandler;
   private Handler<Void> bodyEndHandler;
   private boolean chunked;
