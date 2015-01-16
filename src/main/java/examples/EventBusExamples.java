@@ -17,6 +17,7 @@
 package examples;
 
 import io.vertx.core.Vertx;
+import io.vertx.core.VertxOptions;
 import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.MessageCodec;
@@ -26,6 +27,10 @@ import io.vertx.core.eventbus.MessageConsumer;
  * Created by tim on 09/01/15.
  */
 public class EventBusExamples {
+
+  public void example0_5(Vertx vertx) {
+    EventBus eb = vertx.eventBus();
+  }
 
   public void example1(Vertx vertx) {
     EventBus eb = vertx.eventBus();
@@ -112,6 +117,19 @@ public class EventBusExamples {
 
   class MyPOJO {
 
+  }
+
+  public void example12() {
+    VertxOptions options = new VertxOptions();
+    Vertx.clusteredVertx(options, res -> {
+      if (res.succeeded()) {
+        Vertx vertx = res.result();
+        EventBus eventBus = vertx.eventBus();
+        System.out.println("We now have a clustered event bus: " + eventBus);
+      } else {
+        System.out.println("Failed: " + res.cause());
+      }
+    });
   }
 
 

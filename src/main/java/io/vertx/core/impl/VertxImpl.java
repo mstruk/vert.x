@@ -214,12 +214,27 @@ public class VertxImpl implements VertxInternal {
     return new DatagramSocketImpl(this, options);
   }
 
+  @Override
+  public DatagramSocket createDatagramSocket() {
+    return createDatagramSocket(new DatagramSocketOptions());
+  }
+
   public NetServer createNetServer(NetServerOptions options) {
     return new NetServerImpl(this, options);
   }
 
+  @Override
+  public NetServer createNetServer() {
+    return createNetServer(new NetServerOptions());
+  }
+
   public NetClient createNetClient(NetClientOptions options) {
     return new NetClientImpl(this, options);
+  }
+
+  @Override
+  public NetClient createNetClient() {
+    return createNetClient(new NetClientOptions());
   }
 
   public FileSystem fileSystem() {
@@ -234,8 +249,18 @@ public class VertxImpl implements VertxInternal {
     return new HttpServerImpl(this, serverOptions);
   }
 
+  @Override
+  public HttpServer createHttpServer() {
+    return createHttpServer(new HttpServerOptions());
+  }
+
   public HttpClient createHttpClient(HttpClientOptions options) {
     return new HttpClientImpl(this, options);
+  }
+
+  @Override
+  public HttpClient createHttpClient() {
+    return createHttpClient(new HttpClientOptions());
   }
 
   public EventBus eventBus() {

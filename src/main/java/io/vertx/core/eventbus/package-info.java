@@ -95,6 +95,17 @@
  *
  * Let's jump into the API
  *
+ * ==== Getting the event bus
+ *
+ * You get a reference to the event bus as follows:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.EventBusExamples#example0_5}
+ * ----
+ *
+ * There is a single instance of the event bus per Vert.x instance.
+ *
  * ==== Registering Handlers
  *
  * This simplest way to register a handler is using {@link io.vertx.core.eventbus.EventBus#consumer(String, io.vertx.core.Handler)}.
@@ -260,6 +271,25 @@
  *
  * The event bus doesn't just exist in a single Vert.x instance. By clustering different Vert.x instances together on
  * your network they can form a single, distributed, event bus.
+ *
+ * ==== Clustering programmatically
+ *
+ * If you're creating your Vert.x instance programmatically you get a clustered event bus by configuring the Vert.x
+ * instance as clustered;
+ *
+ * [source,java]
+ * ----
+ * {@link examples.EventBusExamples#example12}
+ * ----
+ *
+ * You should also make sure you have a {@link io.vertx.core.spi.cluster.ClusterManager} implementation on your classpath,
+ * for example the default {@code HazelcastClusterManager}.
+ *
+ * ==== Clustering on the command line
+ *
+ * You can run Vert.x clustered on the command line with
+ *
+ *  vertx run MyVerticle -cluster
  *
  */
 @Document(fileName = "eventbus.adoc")

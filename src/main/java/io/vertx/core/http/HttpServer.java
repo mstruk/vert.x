@@ -107,6 +107,17 @@ public interface HttpServer extends Measured {
   HttpServer listen(int port, String host);
 
   /**
+   * Like {@link #listen(int, String)} but supplying a handler that will be called when the server is actually
+   * listening (or has failed).
+   *
+   * @param port  the port to listen on
+   * @param host  the host to listen on
+   * @param listenHandler  the listen handler
+   */
+  @Fluent
+  HttpServer listen(int port, String host, Handler<AsyncResult<HttpServer>> listenHandler);
+
+  /**
    * Like {@link #listen(int, String)} but the server will listen on host "0.0.0.0" and port specified here ignoring
    * any value in the {@link io.vertx.core.http.HttpServerOptions} that was used when creating the server.
    *

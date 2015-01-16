@@ -100,6 +100,5 @@ public interface ServerWebSocket extends WebSocketBase {
    * <p>
    * You might use this method, if for example you only want to accept WebSockets with a particular path.
    */
-  @Fluent
   void reject();
 }

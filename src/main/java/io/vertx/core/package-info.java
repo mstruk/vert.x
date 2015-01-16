@@ -617,6 +617,7 @@
  *
  * include::metrics.adoc[]
  *
+ * [[streams]]
  * include::streams.adoc[]
  *
  * include::parsetools.adoc[]
@@ -624,6 +625,22 @@
  * == Thread safety
  *
  * Notes on thread safety of Vert.x objects
+ *
+ * == Clustering
+ *
+ * === Trouble shooting clustering
+ *
+ * === High Availability
+ *
+ * === Security notes
+ *
+ * Warn about file uploads and serving files from arbitrary locations
+ *
+ * Vert.x is a tool kit
+ *
+ * Run in a security sandbox
+ *
+ * Use Apex
  *
  *
  */

@@ -124,12 +124,26 @@ public interface Vertx extends Measured {
   NetServer createNetServer(NetServerOptions options);
 
   /**
+   * Create a TCP/SSL server using default options
+   *
+   * @return the server
+   */
+  NetServer createNetServer();
+
+  /**
    * Create a TCP/SSL client using the specified options
    *
    * @param options  the options to use
    * @return the client
    */
   NetClient createNetClient(NetClientOptions options);
+
+  /**
+   * Create a TCP/SSL client using default options
+   *
+   * @return the client
+   */
+  NetClient createNetClient();
 
   /**
    * Create an HTTP/HTTPS server using the specified options
@@ -140,6 +154,13 @@ public interface Vertx extends Measured {
   HttpServer createHttpServer(HttpServerOptions options);
 
   /**
+   * Create an HTTP/HTTPS server using default options
+   *
+   * @return the server
+   */
+  HttpServer createHttpServer();
+
+  /**
    * Create a HTTP/HTTPS client using the specified options
    *
    * @param options  the options to use
@@ -148,12 +169,26 @@ public interface Vertx extends Measured {
   HttpClient createHttpClient(HttpClientOptions options);
 
   /**
+   * Create a HTTP/HTTPS client using default options
+   *
+   * @return the client
+   */
+  HttpClient createHttpClient();
+
+  /**
    * Create a datagram socket using the specified options
    *
    * @param options  the options to use
    * @return the socket
    */
   DatagramSocket createDatagramSocket(DatagramSocketOptions options);
+
+  /**
+   * Create a datagram socket using default options
+   *
+   * @return the socket
+   */
+  DatagramSocket createDatagramSocket();
 
   /**
    * Get the filesystem object. There is a single instance of FileSystem per Vertx instance.
