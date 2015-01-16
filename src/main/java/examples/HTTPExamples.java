@@ -16,14 +16,13 @@
 
 package examples;
 
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
-import io.vertx.core.http.HttpMethod;
-import io.vertx.core.http.HttpServer;
-import io.vertx.core.http.HttpServerOptions;
-import io.vertx.core.http.HttpServerRequest;
+import io.vertx.core.http.*;
 import io.vertx.core.net.NetSocket;
+import io.vertx.core.streams.Pump;
 
 /**
  * Created by tim on 09/01/15.
@@ -168,6 +167,87 @@ public class HTTPExamples {
     request.uploadHandler(upload -> {
       upload.streamToFileSystem("myuploads_directory/" + upload.filename());
     });
+  }
+
+  public void example16(HttpServerRequest request, Buffer buffer) {
+    HttpServerResponse response = request.response();
+    response.write(buffer);
+  }
+
+  public void example17(HttpServerRequest request) {
+    HttpServerResponse response = request.response();
+    response.write("hello world!");
+  }
+
+  public void example18(HttpServerRequest request) {
+    HttpServerResponse response = request.response();
+    response.write("hello world!", "UTF-16");
+  }
+
+  public void example19(HttpServerRequest request) {
+    HttpServerResponse response = request.response();
+    response.write("hello world!");
+    response.end();
+  }
+
+  public void example20(HttpServerRequest request) {
+    HttpServerResponse response = request.response();
+    response.end("hello world!");
+  }
+
+  public void example21(HttpServerRequest request) {
+    HttpServerResponse response = request.response();
+    MultiMap headers = response.headers();
+    headers.set("content-type", "text/html");
+    headers.set("other-header", "wibble");
+  }
+
+  public void example22(HttpServerRequest request) {
+    HttpServerResponse response = request.response();
+    response.putHeader("content-type", "text/html").putHeader("other-header", "wibble");
+  }
+
+  public void example23(HttpServerRequest request) {
+    HttpServerResponse response = request.response();
+    response.setChunked(true);
+  }
+
+  public void example24(HttpServerRequest request) {
+    HttpServerResponse response = request.response();
+    response.setChunked(true);
+    MultiMap trailers = response.trailers();
+    trailers.set("X-wibble", "woobble").set("X-quux", "flooble");
+  }
+
+  public void example25(HttpServerRequest request) {
+    HttpServerResponse response = request.response();
+    response.setChunked(true);
+    response.putTrailer("X-wibble", "woobble").putTrailer("X-quux", "flooble");
+  }
+
+  public void example26(Vertx vertx) {
+    vertx.createHttpServer().requestHandler(request -> {
+      String file = "";
+      if (request.path().equals("/")) {
+        file = "index.html";
+      } else if (!request.path().contains("..")) {
+        file = request.path();
+      }
+      request.response().sendFile("web/" + file);
+    }).listen(8080);
+  }
+
+  public void example27(Vertx vertx) {
+    vertx.createHttpServer().requestHandler(request -> {
+      HttpServerResponse response = request.response();
+      if (request.method() == HttpMethod.PUT) {
+        response.setChunked(true);
+        Pump.pump(request, response).start();
+        request.endHandler(v -> response.end());
+      } else {
+        response.setStatusCode(400).end();
+      }
+    }).listen(8080);
   }
 
 }

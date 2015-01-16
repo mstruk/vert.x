@@ -298,9 +298,210 @@
  *
  * === Sending back responses
  *
+ * The server response object is an instance of {@link io.vertx.core.http.HttpServerResponse} and is obtained from the
+ * request with {@link io.vertx.core.http.HttpServerRequest#response}.
  *
+ * You use the response object to write a response back to the HTTP client.
  *
+ * ==== Setting status code and message
  *
+ * The default HTTP status code for a response is `200`, representing `OK`.
+ *
+ * Use {@link io.vertx.core.http.HttpServerResponse#setStatusCode} to set a different code.
+ *
+ * You can also specify a custom status message with {@link io.vertx.core.http.HttpServerResponse#setStatusMessage}.
+ *
+ * If you don't specify a status message, the default one corresponding to the status code will be used.
+ *
+ * ==== Writing HTTP responses
+ *
+ * To write data to an HTTP response, you use one the {@link io.vertx.core.http.HttpServerResponse#write} operations.
+ *
+ * These can be invoked multiple times before the response is ended. They can be invoked in a few ways:
+ *
+ * With a single buffer:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example16}
+ * ----
+ *
+ * With a string. In this case the string will encoded using UTF-8 and the result written to the wire.
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example17}
+ * ----
+ *
+ * With a string and an encoding. In this case the string will encoded using the specified encoding and the
+ * result written to the wire.
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example18}
+ * ----
+ *
+ * Writing to a response is asynchronous and always returns immediately after the write has been queued.
+ *
+ * If you are just writing a single string or buffer to the HTTP response you can write it and end the response in a
+ * single call to the {@link io.vertx.core.http.HttpServerResponse#end(String)}
+ *
+ * The first call to write results in the response header being being written to the response. Consequently, if you are
+ * not using HTTP chunking then you must set the `Content-Length` header before writing to the response, since it will
+ * be too late otherwise. If you are using HTTP chunking you do not have to worry.
+ *
+ * ==== Ending HTTP responses
+ *
+ * Once you have finished with the HTTP response you should {@link io.vertx.core.http.HttpServerResponse#end} it.
+ *
+ * This can be done in several ways:
+ *
+ * With no arguments, the response is simply ended.
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example19}
+ * ----
+ *
+ * It can also be called with a string or buffer in the same way `write` is called. In this case it's just the same as
+ * calling write with a string or buffer followed by calling end with no arguments. For example:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example20}
+ * ----
+ *
+ * ==== Closing the underlying connection
+ *
+ * You can close the underlying TCP connection with {@link io.vertx.core.http.HttpServerResponse#close}.
+ *
+ * Non keep-alive connections will be automatically closed by Vert.x when the response is ended.
+ *
+ * Keep-alive connections are not automatically closed by Vert.x by default. If you want keep-alive connections to be
+ * closed after an idle time, then you configure {@link io.vertx.core.http.HttpServerOptions#setIdleTimeout}.
+ *
+ * ==== Setting response headers
+ *
+ * HTTP response headers can be added to the response by adding them directly to the
+ * {@link io.vertx.core.http.HttpServerResponse#headers}:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example21}
+ * ----
+ *
+ * Or you can use {@link io.vertx.core.http.HttpServerResponse#putHeader}
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example22}
+ * ----
+ *
+ * Headers must all be added before any parts of the response body are written.
+ *
+ * ==== Chunked HTTP responses and trailers
+ *
+ * Vert.x supports http://en.wikipedia.org/wiki/Chunked_transfer_encoding[HTTP Chunked Transfer Encoding].
+ *
+ * This allows the HTTP response body to be written in chunks, and is normally used when a large response body is
+ * being streamed to a client and the total size is not known in advance.
+ *
+ * You put the HTTP response into chunked mode as follows:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example23}
+ * ----
+ *
+ * Default is non-chunked. When in chunked mode, each call to one of the {@link io.vertx.core.http.HttpServerResponse#write}
+ * methods will result in a new HTTP chunk being written out.
+ *
+ * When in chunked mode you can also write HTTP response trailers to the response. These are actually written in
+ * the final chunk of the response.
+ *
+ * To add trailers to the response, add them directly to the {@link io.vertx.core.http.HttpServerResponse#trailers}.
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example24}
+ * ----
+ *
+ * Or use {@link io.vertx.core.http.HttpServerResponse#putTrailer}.
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example25}
+ * ----
+ *
+ * ==== Serving files directly from disk
+ *
+ * If you were writing a web server, one way to serve a file from disk would be to open it as an {@link io.vertx.core.file.AsyncFile}
+ * and pump it to the HTTP response.
+ *
+ * Or you could load it it one go using {@link io.vertx.core.file.FileSystem#readFile} and write it straight to the response.
+ *
+ * Alternatively, Vert.x provides a method which allows you to serve a file from disk to an HTTP response in one operation.
+ * Where supported by the underlying operating system this may result in the OS directly transferring bytes from the
+ * file to the socket without being copied through user-space at all.
+ *
+ * This is done by using {@link io.vertx.core.http.HttpServerResponse#sendFile}, and is usually more efficient for large
+ * files, but may be slower for small files.
+ *
+ * Here's a very simple web server that serves files from the file system using sendFile:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example26}
+ * ----
+ *
+ * Sending a file is asynchronous and may not complete until some time after the call has returned. If you want to
+ * be notified when the file has been writen you can use {@link io.vertx.core.http.HttpServerResponse#sendFile(String, io.vertx.core.Handler)}
+ *
+ * NOTE: If you use `sendFile` while using HTTPS it will copy through user-space, since if the kernel is copying data
+ * directly from disk to socket it doesn't give us an opportunity to apply any encryption.
+ *
+ * WARNING: If you're going to write web servers directly using Vert.x be careful that users cannot exploit the
+ * path to access files outside the directory from which you want to serve them. It may be safer instead to use
+ * Vert.x Apex.
+ *
+ * ==== Pumping responses
+ *
+ * The server response is a {@link io.vertx.core.streams.WriteStream} instance so you can pump to it from any
+ * {@link io.vertx.core.streams.ReadStream}, e.g. {@link io.vertx.core.file.AsyncFile}, {@link io.vertx.core.net.NetSocket},
+ * {@link io.vertx.core.http.WebSocket} or {@link io.vertx.core.http.HttpServerRequest}.
+ *
+ * Here's an example which echoes the request body back in the response for any PUT methods.
+ * It uses a pump for the body, so it will work even if the HTTP request body is much larger than can fit in memory
+ * at any one time:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example27}
+ * ----
+ *
+ * === HTTP Compression
+ *
+ * Vert.x comes with support for HTTP Compression out of the box.
+ *
+ * This means you are able to automatically compress the body of the responses before they are sent back to the client.
+ *
+ * If the client does not support HTTP compression the responses are sent back without compressing the body.
+ *
+ * This allows to handle Client that support HTTP Compression and those that not support it at the same time.
+ *
+ * To enable compression use can configure it with {@link io.vertx.core.http.HttpServerOptions#setCompressionSupported}.
+ *
+ * By default compression is not enabled.
+ *
+ * When HTTP compression is enabled the server will check if the client incldes an `Accept-Encoding` header which
+ * includes the supported compressions. Commonly used are deflate and gzip. Both are supported by Vert.x.
+ *
+ * If such a header is found the server will automatically compress the body of the response with one of the supported
+ * compressions and send it back to the client.
+ *
+ * Be aware that compression may be able to reduce network traffic but is more CPU-intensive.
+ *
+ * === Creating an HTTP client
  *
  *
  *
