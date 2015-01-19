@@ -17,7 +17,7 @@
 /**
  * == Writing HTTP servers and clients
  *
- * Vert.x allows you to easily write full featured, highly performant, scalable HTTP servers.
+ * Vert.x allows you to easily write non blocking HTTP clients and servers.
  *
  * === Creating an HTTP Server
  *
@@ -503,8 +503,528 @@
  *
  * === Creating an HTTP client
  *
+ * You create an {@link io.vertx.core.http.HttpClient} instance with default options as follows:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example28}
+ * ----
+ *
+ * If you want to configure options for the client, you create it as follows:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example29}
+ * ----
+ *
+ * === Making requests
+ *
+ * The http client is very flexible and there are various ways you can make requests with it.
  *
  *
+ * Often you want to make many requests to the same host/port with an http client. To avoid you repeating the host/port
+ * every time you make a request you can configure the client with a default host/port:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example30}
+ * ----
+ *
+ * Alternatively if you find yourself making lots of requests to different host/ports with the same client you can
+ * simply specify the host/port when doing the request.
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example31}
+ * ----
+ *
+ * Both methods of specifying host/port are supported for all the different ways of making requests with the client.
+ *
+ * ==== Simple requests with no request body
+ *
+ * Often, you'll want to make HTTP requests with no request body. This is usually the case with HTTP GET, OPTIONS and
+ * HEAD requests.
+ *
+ * The simplest way to do this with the Vert.x http client is using the methods prefixed with `Now`. For example
+ * {@link io.vertx.core.http.HttpClient#getNow)}.
+ *
+ * These methods create the http request and send it in a single method call and allow you to provide a handler that will be
+ * called with the http response when it comes back.
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example32}
+ * ----
+ *
+ * ==== Writing general requests
+ *
+ * At other times you don't know the request method you want to send until run-time. For that use case we provide
+ * general purpose request methods such as {@link io.vertx.core.http.HttpClient#request} which allow you to specify
+ * the HTTP method at run-time:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example33}
+ * ----
+ *
+ * ==== Writing request bodies
+ *
+ * Sometimes you'll want to write requests which have a body, or perhaps you want to write headers to a request
+ * before sending it.
+ *
+ * To do this you can call one of the specific request methods such as {@link io.vertx.core.http.HttpClient#post} or
+ * one of the general purpose request methods such as {@link io.vertx.core.http.HttpClient#request}.
+ *
+ * These methods don't send the request immediately, but instead return an instance of {@link io.vertx.core.http.HttpClientRequest}
+ * which can be used to write to the request body or write headers.
+ *
+ * Here are some examples of writing a POST request with a body:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example34}
+ * ----
+ *
+ * Methods exist to write strings in UTF-8 encoding and in any specific encoding and to write buffers:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example35}
+ * ----
+ *
+ * If you are just writing a single string or buffer to the HTTP request you can write it and end the request in a
+ * single call to the `end` function.
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example36}
+ * ----
+ *
+ * When you're writing to a request, the first call to `write` will result in the request headers being written
+ * out to the wire.
+ *
+ * The actual write is asychronous and might not occur until some time after the call has returned.
+ *
+ * Non-chunked HTTP requests with a request body require a `Content-Length` header to be provided.
+ *
+ * Consequently, if you are not using chunked HTTP then you must set the `Content-Length` header before writing
+ * to the request, as it will be too late otherwise.
+ *
+ * If you are calling one of the `end` methods that take a string or buffer then Vert.x will automatically calculate
+ * and set the `Content-Length` header before writing the request body.
+ *
+ * If you are using HTTP chunking a a `Content-Length` header is not required, so you do not have to calculate the size
+ * up-front.
+ *
+ * ==== Writing request headers
+ *
+ * You can write headers to a request using the {@link io.vertx.core.http.HttpClientRequest#headers()} multi-map as follows:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example37}
+ * ----
+ *
+ * The headers are an instance of {@link io.vertx.core.MultiMap} which provides operations for adding, setting and removing
+ * entries. Http headers allow more than one value for a specific key.
+ *
+ * You can also write headers using {@link io.vertx.core.http.HttpClientRequest#putHeader}
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example38}
+ * ----
+ *
+ * If you wish to write headers to the request you must do so before any part of the request body is written.
+ *
+ * ==== Ending HTTP requests
+ *
+ * Once you have finished with the HTTP request you must end it with one of the {@link io.vertx.core.http.HttpClientRequest#end}
+ * operations.
+ *
+ * Ending a request causes any headers to be written, if they have not already been written and the request to be marked
+ * as complete.
+ *
+ * Requests can be ended in several ways. With no arguments the request is simply ended:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example39}
+ * ----
+ *
+ * Or a string or buffer can be provided in the call to `end`. This is like calling `write` with the string or buffer
+ * before calling `end` with no arguments
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example40}
+ * ----
+ *
+ * ==== Chunked HTTP requests
+ *
+ * Vert.x supports http://en.wikipedia.org/wiki/Chunked_transfer_encoding[HTTP Chunked Transfer Encoding] for requests.
+ *
+ * This allows the HTTP request body to be written in chunks, and is normally used when a large request body is being streamed
+ * to the server, whose size is not known in advance.
+ *
+ * You put the HTTP request into chunked mode using {@link io.vertx.core.http.HttpClientRequest#setChunked(boolean)}.
+ *
+ * In chunked mode each call to write will cause a new chunk to be written to the wire. In chunked mode there is
+ * no need to set the `Content-Length` of the request up-front.
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example41}
+ * ----
+ *
+ * ==== Request timeouts
+ *
+ * You can set a timeout for a specific http request using {@link io.vertx.core.http.HttpClientRequest#setTimeout(long)}.
+ *
+ * If the request does not return any data within the timeout period an exception will be passed to the exception handler
+ * (if provided) and the request will be closed.
+ *
+ * ==== Handling exceptions
+ *
+ * You can handle exceptions corresponding to a request by setting an exception handler on the {@link io.vertx.core.http.HttpClientRequest}
+ * instance:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example42}
+ * ----
+ *
+ * TODO - what about exceptions in the getNow methods where no exception handler can be provided??
+ *
+ * Maybe need a catch all exception handler??
+ *
+ * ==== Specifying a handler on the client request
+ *
+ * Instead of providing a response handler in the call to create the client request object, alternatively, you can
+ * not provide a handler when the request is created and set it later on the request object itself, using
+ * {@link io.vertx.core.http.HttpClientRequest#handler(io.vertx.core.Handler)}, for example:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example43}
+ * ----
+ *
+ * ==== Using the request as a stream
+ *
+ * The {@link io.vertx.core.http.HttpClientRequest} instance is also a {@link io.vertx.core.streams.WriteStream} which means
+ * you can pump to it from any {@link io.vertx.core.streams.ReadStream} instance.
+ *
+ * For, example, you could pump a file on disk to a http request body as follows:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example44}
+ * ----
+ *
+ * === Handling http responses
+ *
+ * You receive an instance of {@link io.vertx.core.http.HttpClientResponse} into the handler that you specify in of
+ * the request methods or by setting a handler directly on the {@link io.vertx.core.http.HttpClientRequest} object.
+ *
+ * You can query the status code and the status message of the response with {@link io.vertx.core.http.HttpClientResponse#statusCode}
+ * and {@link io.vertx.core.http.HttpClientResponse#statusMessage}.
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example45}
+ * ----
+ *
+ * ==== Using the response as a stream
+ *
+ * The {@link io.vertx.core.http.HttpClientResponse} instance is also a {@link io.vertx.core.streams.ReadStream} which means
+ * you can pump it to any {@link io.vertx.core.streams.WriteStream} instance.
+ *
+ * ==== Response headers and trailers
+ *
+ * Http responses can contain headers. Use {@link io.vertx.core.http.HttpClientResponse#headers} to get the headers.
+ *
+ * The object returned is a {@link io.vertx.core.MultiMap} as HTTP headers can contain multiple values for single keys.
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example46}
+ * ----
+ *
+ * Chunked HTTP responses can also contain trailers - these are sent in the last chunk of the response body.
+ *
+ * You use {@link io.vertx.core.http.HttpClientResponse#trailers} to get the trailers. Trailers are also a {@link io.vertx.core.MultiMap}.
+ *
+ * ==== Reading the request body
+ *
+ * The response handler is called when the headers of the response have been read from the wire.
+ *
+ * If the response has a body this might arrive in several pieces some time after the headers have been read. We
+ * don't wait for all the body to arrive before calling the response handler as the response could be very large and we
+ * might be waiting a long time, or run out of memory for large responses.
+ *
+ * As parts of the response body arrive, the {@link io.vertx.core.http.HttpClientResponse#handler} is called with
+ * a {@link io.vertx.core.buffer.Buffer} representing the piece of the body:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example47}
+ * ----
+ *
+ * If you know the response body is not very large and want to aggregate it all in memory before handling it, you can
+ * either aggregate it yourself:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example48}
+ * ----
+ *
+ * Or you can use the convenience {@link io.vertx.core.http.HttpClientResponse#bodyHandler(io.vertx.core.Handler)} which
+ * is called with the entire body when the response has been fully read:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example49}
+ * ----
+ *
+ * ==== Response end handler
+ *
+ * The response {@link io.vertx.core.http.HttpClientResponse#endHandler} is called when the entire response body has been read
+ * or immediately after the headers have been read and the response handler has been called if there is no body.
+ *
+ * ==== Reading cookies from the response
+ *
+ * You can retrieve the list of cookies from a response using {@link io.vertx.core.http.HttpClientResponse#cookies()}.
+ *
+ * Alternatively you can just parse the `Set-Cookie` headers yourself in the response.
+ *
+ *
+ * ==== 100-Continue handling
+ *
+ * According to the http://www.w3.org/Protocols/rfc2616/rfc2616-sec8.html[HTTP 1.1 specification] a client can set a
+ * header `Expect: 100-Continue` and send the request header before sending the rest of the request body.
+ *
+ * The server can then respond with an interim response status `Status: 100 (Continue)` to signify to the client that
+ * it is ok to send the rest of the body.
+ *
+ * The idea here is it allows the server to authorise and accept/reject the request before large amounts of data are sent.
+ * Sending large amounts of data if the request might not be accepted is a waste of bandwidth and ties up the server
+ * in reading data that it will just discard.
+ *
+ * Vert.x allows you to set a {@link io.vertx.core.http.HttpClientRequest#continueHandler(io.vertx.core.Handler)} on the
+ * client request object
+ *
+ * This will be called if the server sends back a `Status: 100 (Continue)` response to signify that it is ok to send
+ * the rest of the request.
+ *
+ * This is used in conjunction with {@link io.vertx.core.http.HttpClientRequest#sendHead()}to send the head of the request.
+ *
+ * Here's an example:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example50}
+ * ----
+ *
+ * === Enabling compression on the client
+ *
+ * The http client comes with support for HTTP Compression out of the box.
+ *
+ * This means the client can let the remote http server know that it supports compression, and will be able to handle
+ * compressed response bodies.
+ *
+ * An http server is free to either compress with one of the supported compression algorithms or to send the body back
+ * without compressing it at all. So this is only a hint for the Http server which it may ignore at will.
+ *
+ * To tell the http server which compression is supported by the client it will include an `Accept-Encoding` header with
+ * the supported compression algorithm as value. Multiple compression algorithms are supported. In case of Vert.x this
+ * will result in the following header added:
+ *
+ *  Accept-Encoding: gzip, deflate
+ *
+ * The server will choose then from one of these. You can detect if a server ompressed the body by checking for the
+ * `Content-Encoding` header in the response sent back from it.
+ *
+ * If the body of the response was compressed via gzip it will include for example the following header:
+ *
+ *  Content-Encoding: gzip
+ *
+ * To enable compression set {@link io.vertx.core.http.HttpClientOptions#setTryUseCompression(boolean)} on the options
+ * used when creating the client.
+ *
+ * By default compression is disabled.
+ *
+ * === Pooling and keep alive
+ *
+ * Http keep alive allows http connections to be used for more than one request. This can be a more efficient use of
+ * connections when you're making multiple requests to the same server.
+ *
+ * The http client supports pooling of connections, allowing you to reuse connections between requests.
+ *
+ * For pooling to work, keep alive must be true using {@link io.vertx.core.http.HttpClientOptions#setKeepAlive(boolean)}
+ * on the options used when configuring the client. The default value is true.
+ *
+ * When keep alive is enabled. Vert.x will add a `Connection: Keep-Alive` header to each HTTP request sent.
+ *
+ * The maximum number of connections to pool *for each server* is configured using {@link io.vertx.core.http.HttpClientOptions#setMaxPoolSize(int)}
+ *
+ * When making a request with pooling enabled, Vert.x will create a new connection if there are less than the maximum number of
+ * connections already created for that server, otherwise it will add the request to a queue.
+ *
+ * When a response returns, if there are pending requests for the server, then the connection will be reused, otherwise
+ * it will be closed.
+ *
+ * This gives the benefits of keep alive when the client is loaded but means we don't keep connections hanging around
+ * unnecessarily when there would be no benefits anyway.
+ *
+ * === Pipe-lining
+ *
+ * The client also supports pipe-lining of requests on a connection.
+ *
+ * Pipe-lining means another request is sent on the same connection before the response from the preceding one has
+ * returned. Pipe-lining is not appropriate for all requests.
+ *
+ * To enable pipe-lining, it must be enabled using {@link io.vertx.core.http.HttpClientOptions#setPipelining(boolean)}.
+ * By default pipe-lining is disabled.
+ *
+ * When pipe-lining is enabled requests will be written to connections without waiting for previous responses to return.
+ *
+ * When pipe-line responses return at the client, the connection will be automatically closed when all in-flight
+ * responses have returned and there are no outstanding pending requests to write.
+ *
+ * === Server sharing
+ *
+ * TODO
+ * round robin requests etc
+ *
+ * === Using HTTPS with Vert.x
+ *
+ * Vert.x http servers and clients can be configured to use HTTPS in exactly the same way as net servers.
+ *
+ * Please see <<netserver_ssl, configuring net servers to use SSL>> for more information.
+ *
+ * === WebSockets
+ *
+ * http://en.wikipedia.org/wiki/WebSocket[WebSockets] are a web technology that allows a full duplex socket-like
+ * connection between HTTP servers and HTTP clients (typically browsers).
+ *
+ * Vert.x supports WebSockets on both the client and server-side.
+ *
+ * ==== WebSockets on the server
+ *
+ * There are two ways of handling WebSockets on the server side.
+ *
+ * ===== WebSocket handler
+ *
+ * The first way involves providing a {@link io.vertx.core.http.HttpServer#websocketHandler(io.vertx.core.Handler)}
+ * on the server instance.
+ *
+ * When a WebSocket connection is made to the server, the handler will be called, passing in an instance of
+ * {@link io.vertx.core.http.ServerWebSocket}.
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example51}
+ * ----
+ *
+ * You can choose to reject the WebSocket by calling {@link io.vertx.core.http.ServerWebSocket#reject()}.
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example52}
+ * ----
+ *
+ * ===== Upgrading to WebSocket
+ *
+ * The second way of handling WebSockets is to handle the HTTP Upgrade request that was sent from the client, and
+ * call {@link io.vertx.core.http.HttpServerRequest#upgrade()} on the server request.
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example53}
+ * ----
+ *
+ * ===== The server WebSocket
+ *
+ * The {@link io.vertx.core.http.ServerWebSocket} instance enables you to retrieve the {@link io.vertx.core.http.ServerWebSocket#headers() headers},
+ * {@link io.vertx.core.http.ServerWebSocket#path()} path}, {@link io.vertx.core.http.ServerWebSocket#query() query} and
+ * {@link io.vertx.core.http.ServerWebSocket#uri()} URI} of the HTTP request of the WebSocket handshake.
+ *
+ * ==== WebSockets on the client
+ *
+ * The Vert.x {@link io.vertx.core.http.HttpClient} supports WebSockets.
+ *
+ * You can connect a WebSocket to a server using one of the {@link io.vertx.core.http.HttpClient#websocket} operations and
+ * providing a handler.
+ *
+ * The handler will be called with an instance of {@link io.vertx.core.http.WebSocket} when the connection has been made:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example54}
+ * ----
+ *
+ * ==== Writing messages to WebSockets
+ *
+ * If you wish to write a single binary WebSocket message containing a single WebSocket frame to the WebSocket (a
+ * common case) the simplest way to do this is to use {@link io.vertx.core.http.WebSocket#writeMessage(io.vertx.core.buffer.Buffer)}:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example55}
+ * ----
+ *
+ * If the websocket message is larger than the maximum websocket frame size as configured with
+ * {@link io.vertx.core.http.HttpClientOptions#setMaxWebsocketFrameSize(int)}
+ * then Vert.x will split it into multiple WebSocket frames before sending it on the wire.
+ *
+ * ==== Writing frames to WebSockets
+ *
+ * A WebSocket message can be composed of multiple frames. In this case the first frame is either a _binary_ or _text_ frame
+ * followed by one or more _continuation_ frames.
+ *
+ * The last frame in the message is marked as _final_.
+ *
+ * To send a message consisting of multiple frames you create frames using
+ * {@link io.vertx.core.http.WebSocketFrame#binaryFrame(io.vertx.core.buffer.Buffer, boolean)}
+ * , {@link io.vertx.core.http.WebSocketFrame#textFrame(java.lang.String, boolean)} or
+ * {@link io.vertx.core.http.WebSocketFrame#continuationFrame(io.vertx.core.buffer.Buffer, boolean)} and write them
+ * to the WebSocket using {@link io.vertx.core.http.WebSocket#writeFrame(io.vertx.core.http.WebSocketFrame)}.
+ *
+ * Here's an example for binary frames:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example56}
+ * ----
+ *
+ * ==== Reading frames from WebSockets
+ *
+ * To read frames from a WebSocket you use the {@link io.vertx.core.http.WebSocket#frameHandler(io.vertx.core.Handler)}.
+ *
+ * The frame handler will be called with instances of {@link io.vertx.core.http.WebSocketFrame} when a frame arrives,
+ * for example:
+ *
+ * [source,java]
+ * ----
+ * {@link examples.HTTPExamples#example57}
+ * ----
+ *
+ * ==== Closing WebSockets
+ *
+ * Use {@link io.vertx.core.http.WebSocket#close()} to close the WebSocket connection when you have finished with it.
+ *
+ * ==== Streaming WebSockets
+ *
+ * The {@link io.vertx.core.http.WebSocket} instance is also a {@link io.vertx.core.streams.ReadStream} and a
+ * {@link io.vertx.core.streams.WriteStream} so it can be used with pumps.
+ *
+ * When using a WebSocket as a write stream or a read stream it can only be used with WebSockets connections that are
+ * used with binary frames that are no split over multiple frames.
+ *
+ * === Automatic clean-up in verticles
+ *
+ * If you're creating http servers and clients from inside verticles, those servers and clients will be automatically closed
+ * when the verticle is undeployed.
  *
  *
  *

@@ -291,6 +291,11 @@
  *
  *  vertx run MyVerticle -cluster
  *
+ * === Automatic clean-up in verticles
+ *
+ * If you're registering event bus handlers from inside verticles, those handlers will be automatically unregistered
+ * when the verticle is undeployed.
+ *
  */
 @Document(fileName = "eventbus.adoc")
 package io.vertx.core.eventbus;

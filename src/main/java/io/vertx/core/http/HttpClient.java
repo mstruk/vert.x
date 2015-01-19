@@ -64,6 +64,15 @@ public interface HttpClient extends Measured {
   HttpClientRequest request(HttpMethod method, int port, String host, String requestURI);
 
   /**
+   * Create an HTTP request to send to the server at the specified host and default port.
+   * @param method  the HTTP method
+   * @param host  the host
+   * @param requestURI  the relative URI
+   * @return  an HTTP client request object
+   */
+  HttpClientRequest request(HttpMethod method, String host, String requestURI);
+
+  /**
    * Create an HTTP request to send to the server at the specified host and port, specifying a response handler to receive
    * the response
    * @param method  the HTTP method
@@ -74,6 +83,17 @@ public interface HttpClient extends Measured {
    * @return  an HTTP client request object
    */
   HttpClientRequest request(HttpMethod method, int port, String host, String requestURI, Handler<HttpClientResponse> responseHandler);
+
+  /**
+   * Create an HTTP request to send to the server at the specified host and default port, specifying a response handler to receive
+   * the response
+   * @param method  the HTTP method
+   * @param host  the host
+   * @param requestURI  the relative URI
+   * @param responseHandler  the response handler
+   * @return  an HTTP client request object
+   */
+  HttpClientRequest request(HttpMethod method, String host, String requestURI, Handler<HttpClientResponse> responseHandler);
 
   /**
    * Create an HTTP request to send to the server at the default host and port.
@@ -121,6 +141,14 @@ public interface HttpClient extends Measured {
   HttpClientRequest get(int port, String host, String requestURI);
 
   /**
+   * Create an HTTP GET request to send to the server at the specified host and default port.
+   * @param host  the host
+   * @param requestURI  the relative URI
+   * @return  an HTTP client request object
+   */
+  HttpClientRequest get(String host, String requestURI);
+
+  /**
    * Create an HTTP GET request to send to the server at the specified host and port, specifying a response handler to receive
    * the response
    * @param port  the port
@@ -130,6 +158,16 @@ public interface HttpClient extends Measured {
    * @return  an HTTP client request object
    */
   HttpClientRequest get(int port, String host, String requestURI, Handler<HttpClientResponse> responseHandler);
+
+  /**
+   * Create an HTTP GET request to send to the server at the specified host and default port, specifying a response handler to receive
+   * the response
+   * @param host  the host
+   * @param requestURI  the relative URI
+   * @param responseHandler  the response handler
+   * @return  an HTTP client request object
+   */
+  HttpClientRequest get(String host, String requestURI, Handler<HttpClientResponse> responseHandler);
 
   /**
    * Create an HTTP GET request to send to the server at the default host and port.
@@ -175,6 +213,16 @@ public interface HttpClient extends Measured {
   HttpClient getNow(int port, String host, String requestURI, Handler<HttpClientResponse> responseHandler);
 
   /**
+   * Sends an HTTP GET request to the server at the specified host and default port, specifying a response handler to receive
+   * the response
+   * @param host  the host
+   * @param requestURI  the relative URI
+   * @param responseHandler  the response handler
+   * @return a reference to this, so the API can be used fluently
+   */
+  HttpClient getNow(String host, String requestURI, Handler<HttpClientResponse> responseHandler);
+
+  /**
    * Sends an HTTP GET request  to the server at the default host and port, specifying a response handler to receive
    * the response
    * @param requestURI  the relative URI
@@ -193,6 +241,14 @@ public interface HttpClient extends Measured {
   HttpClientRequest post(int port, String host, String requestURI);
 
   /**
+   * Create an HTTP POST request to send to the server at the specified host and default port.
+   * @param host  the host
+   * @param requestURI  the relative URI
+   * @return  an HTTP client request object
+   */
+  HttpClientRequest post(String host, String requestURI);
+
+  /**
    * Create an HTTP POST request to send to the server at the specified host and port, specifying a response handler to receive
    * the response
    * @param port  the port
@@ -202,6 +258,16 @@ public interface HttpClient extends Measured {
    * @return  an HTTP client request object
    */
   HttpClientRequest post(int port, String host, String requestURI, Handler<HttpClientResponse> responseHandler);
+
+  /**
+   * Create an HTTP POST request to send to the server at the specified host and default port, specifying a response handler to receive
+   * the response
+   * @param host  the host
+   * @param requestURI  the relative URI
+   * @param responseHandler  the response handler
+   * @return  an HTTP client request object
+   */
+  HttpClientRequest post(String host, String requestURI, Handler<HttpClientResponse> responseHandler);
 
   /**
    * Create an HTTP POST request to send to the server at the default host and port.
@@ -245,6 +311,14 @@ public interface HttpClient extends Measured {
   HttpClientRequest head(int port, String host, String requestURI);
 
   /**
+   * Create an HTTP HEAD request to send to the server at the specified host and default port.
+   * @param host  the host
+   * @param requestURI  the relative URI
+   * @return  an HTTP client request object
+   */
+  HttpClientRequest head(String host, String requestURI);
+
+  /**
    * Create an HTTP HEAD request to send to the server at the specified host and port, specifying a response handler to receive
    * the response
    * @param port  the port
@@ -254,6 +328,16 @@ public interface HttpClient extends Measured {
    * @return  an HTTP client request object
    */
   HttpClientRequest head(int port, String host, String requestURI, Handler<HttpClientResponse> responseHandler);
+
+  /**
+   * Create an HTTP HEAD request to send to the server at the specified host and default port, specifying a response handler to receive
+   * the response
+   * @param host  the host
+   * @param requestURI  the relative URI
+   * @param responseHandler  the response handler
+   * @return  an HTTP client request object
+   */
+  HttpClientRequest head(String host, String requestURI, Handler<HttpClientResponse> responseHandler);
 
   /**
    * Create an HTTP HEAD request to send to the server at the default host and port.
@@ -299,6 +383,16 @@ public interface HttpClient extends Measured {
   HttpClient headNow(int port, String host, String requestURI, Handler<HttpClientResponse> responseHandler);
 
   /**
+   * Sends an HTTP HEAD request to the server at the specified host and default port, specifying a response handler to receive
+   * the response
+   * @param host  the host
+   * @param requestURI  the relative URI
+   * @param responseHandler  the response handler
+   * @return a reference to this, so the API can be used fluently
+   */
+  HttpClient headNow(String host, String requestURI, Handler<HttpClientResponse> responseHandler);
+
+  /**
    * Sends an HTTP HEAD request  to the server at the default host and port, specifying a response handler to receive
    * the response
    * @param requestURI  the relative URI
@@ -317,6 +411,14 @@ public interface HttpClient extends Measured {
   HttpClientRequest options(int port, String host, String requestURI);
 
   /**
+   * Create an HTTP OPTIONS request to send to the server at the specified host and default port.
+   * @param host  the host
+   * @param requestURI  the relative URI
+   * @return  an HTTP client request object
+   */
+  HttpClientRequest options(String host, String requestURI);
+
+  /**
    * Create an HTTP OPTIONS request to send to the server at the specified host and port, specifying a response handler to receive
    * the response
    * @param port  the port
@@ -326,6 +428,16 @@ public interface HttpClient extends Measured {
    * @return  an HTTP client request object
    */
   HttpClientRequest options(int port, String host, String requestURI, Handler<HttpClientResponse> responseHandler);
+
+  /**
+   * Create an HTTP OPTIONS request to send to the server at the specified host and default port, specifying a response handler to receive
+   * the response
+   * @param host  the host
+   * @param requestURI  the relative URI
+   * @param responseHandler  the response handler
+   * @return  an HTTP client request object
+   */
+  HttpClientRequest options(String host, String requestURI, Handler<HttpClientResponse> responseHandler);
 
   /**
    * Create an HTTP OPTIONS request to send to the server at the default host and port.
@@ -371,6 +483,16 @@ public interface HttpClient extends Measured {
   HttpClient optionsNow(int port, String host, String requestURI, Handler<HttpClientResponse> responseHandler);
 
   /**
+   * Sends an HTTP OPTIONS request to the server at the specified host and default port, specifying a response handler to receive
+   * the response
+   * @param host  the host
+   * @param requestURI  the relative URI
+   * @param responseHandler  the response handler
+   * @return a reference to this, so the API can be used fluently
+   */
+  HttpClient optionsNow(String host, String requestURI, Handler<HttpClientResponse> responseHandler);
+
+  /**
    * Sends an HTTP OPTIONS request  to the server at the default host and port, specifying a response handler to receive
    * the response
    * @param requestURI  the relative URI
@@ -389,6 +511,14 @@ public interface HttpClient extends Measured {
   HttpClientRequest put(int port, String host, String requestURI);
 
   /**
+   * Create an HTTP PUT request to send to the server at the specified host and default port.
+   * @param host  the host
+   * @param requestURI  the relative URI
+   * @return  an HTTP client request object
+   */
+  HttpClientRequest put(String host, String requestURI);
+
+  /**
    * Create an HTTP PUT request to send to the server at the specified host and port, specifying a response handler to receive
    * the response
    * @param port  the port
@@ -398,6 +528,16 @@ public interface HttpClient extends Measured {
    * @return  an HTTP client request object
    */
   HttpClientRequest put(int port, String host, String requestURI, Handler<HttpClientResponse> responseHandler);
+
+  /**
+   * Create an HTTP PUT request to send to the server at the specified host and default port, specifying a response handler to receive
+   * the response
+   * @param host  the host
+   * @param requestURI  the relative URI
+   * @param responseHandler  the response handler
+   * @return  an HTTP client request object
+   */
+  HttpClientRequest put(String host, String requestURI, Handler<HttpClientResponse> responseHandler);
 
   /**
    * Create an HTTP PUT request to send to the server at the default host and port.
@@ -441,6 +581,14 @@ public interface HttpClient extends Measured {
   HttpClientRequest delete(int port, String host, String requestURI);
 
   /**
+   * Create an HTTP DELETE request to send to the server at the specified host and default port.
+   * @param host  the host
+   * @param requestURI  the relative URI
+   * @return  an HTTP client request object
+   */
+  HttpClientRequest delete(String host, String requestURI);
+
+  /**
    * Create an HTTP DELETE request to send to the server at the specified host and port, specifying a response handler to receive
    * the response
    * @param port  the port
@@ -450,6 +598,16 @@ public interface HttpClient extends Measured {
    * @return  an HTTP client request object
    */
   HttpClientRequest delete(int port, String host, String requestURI, Handler<HttpClientResponse> responseHandler);
+
+  /**
+   * Create an HTTP DELETE request to send to the server at the specified host and default port, specifying a response handler to receive
+   * the response
+   * @param host  the host
+   * @param requestURI  the relative URI
+   * @param responseHandler  the response handler
+   * @return  an HTTP client request object
+   */
+  HttpClientRequest delete(String host, String requestURI, Handler<HttpClientResponse> responseHandler);
 
   /**
    * Create an HTTP DELETE request to send to the server at the default host and port.
@@ -494,6 +652,15 @@ public interface HttpClient extends Measured {
   HttpClient websocket(int port, String host, String requestURI, Handler<WebSocket> wsConnect);
 
   /**
+   * Connect a WebSocket to the host and relative request URI and default port
+   * @param host  the host
+   * @param requestURI  the relative URI
+   * @param wsConnect  handler that will be called with the websocket when connected
+   * @return a reference to this, so the API can be used fluently
+   */
+  HttpClient websocket(String host, String requestURI, Handler<WebSocket> wsConnect);
+
+  /**
    * Connect a WebSocket to the specified port, host and relative request URI, and with the specified headers
    * @param port  the port
    * @param host  the host
@@ -503,6 +670,16 @@ public interface HttpClient extends Measured {
    * @return a reference to this, so the API can be used fluently
    */
   HttpClient websocket(int port, String host, String requestURI, MultiMap headers, Handler<WebSocket> wsConnect);
+
+  /**
+   * Connect a WebSocket to the specified host,relative request UR, and default port and with the specified headers
+   * @param host  the host
+   * @param requestURI  the relative URI
+   * @param headers  the headers
+   * @param wsConnect  handler that will be called with the websocket when connected
+   * @return a reference to this, so the API can be used fluently
+   */
+  HttpClient websocket(String host, String requestURI, MultiMap headers, Handler<WebSocket> wsConnect);
 
   /**
    * Connect a WebSocket to the specified port, host and relative request URI, with the specified headers and using
@@ -519,6 +696,19 @@ public interface HttpClient extends Measured {
                        Handler<WebSocket> wsConnect);
 
   /**
+   * Connect a WebSocket to the specified host, relative request URI and default port with the specified headers and using
+   * the specified version of WebSockets
+   * @param host  the host
+   * @param requestURI  the relative URI
+   * @param headers  the headers
+   * @param version  the websocket version
+   * @param wsConnect  handler that will be called with the websocket when connected
+   * @return a reference to this, so the API can be used fluently
+   */
+  HttpClient websocket(String host, String requestURI, MultiMap headers, WebsocketVersion version,
+                       Handler<WebSocket> wsConnect);
+
+  /**
    * Connect a WebSocket to the specified port, host and relative request URI, with the specified headers, using
    * the specified version of WebSockets, and the specified websocket sub protocols
    * @param port  the port
@@ -531,6 +721,20 @@ public interface HttpClient extends Measured {
    * @return a reference to this, so the API can be used fluently
    */
   HttpClient websocket(int port, String host, String requestURI, MultiMap headers, WebsocketVersion version,
+                       String subProtocols, Handler<WebSocket> wsConnect);
+
+  /**
+   * Connect a WebSocket to the specified host, relative request URI and default port, with the specified headers, using
+   * the specified version of WebSockets, and the specified websocket sub protocols
+   * @param host  the host
+   * @param requestURI  the relative URI
+   * @param headers  the headers
+   * @param version  the websocket version
+   * @param subProtocols  the subprotocols to use
+   * @param wsConnect  handler that will be called with the websocket when connected
+   * @return a reference to this, so the API can be used fluently
+   */
+  HttpClient websocket(String host, String requestURI, MultiMap headers, WebsocketVersion version,
                        String subProtocols, Handler<WebSocket> wsConnect);
 
   /**
@@ -585,6 +789,14 @@ public interface HttpClient extends Measured {
   WebSocketStream websocketStream(int port, String host, String requestURI);
 
   /**
+   * Create a WebSocket stream to the specified host, relative request URI and default port
+   * @param host  the host
+   * @param requestURI  the relative URI
+   * @return a reference to this, so the API can be used fluently
+   */
+  WebSocketStream websocketStream(String host, String requestURI);
+
+  /**
    * Create a WebSocket stream to the specified port, host and relative request URI, and with the specified headers
    * @param port  the port
    * @param host  the host
@@ -593,6 +805,15 @@ public interface HttpClient extends Measured {
    * @return a reference to this, so the API can be used fluently
    */
   WebSocketStream websocketStream(int port, String host, String requestURI, MultiMap headers);
+
+  /**
+   * Create a WebSocket stream to the specified host, relative request URI and default port and with the specified headers
+   * @param host  the host
+   * @param requestURI  the relative URI
+   * @param headers  the headers
+   * @return a reference to this, so the API can be used fluently
+   */
+  WebSocketStream websocketStream(String host, String requestURI, MultiMap headers);
 
   /**
    * Create a WebSocket stream to the specified port, host and relative request URI, with the specified headers and using
@@ -607,6 +828,17 @@ public interface HttpClient extends Measured {
   WebSocketStream websocketStream(int port, String host, String requestURI, MultiMap headers, WebsocketVersion version);
 
   /**
+   * Create a WebSocket stream to the specified host, relative request URI and default port and with the specified headers and using
+   * the specified version of WebSockets
+   * @param host  the host
+   * @param requestURI  the relative URI
+   * @param headers  the headers
+   * @param version  the websocket version
+   * @return a reference to this, so the API can be used fluently
+   */
+  WebSocketStream websocketStream(String host, String requestURI, MultiMap headers, WebsocketVersion version);
+
+  /**
    * Create a WebSocket stream to the specified port, host and relative request URI, with the specified headers, using
    * the specified version of WebSockets, and the specified websocket sub protocols
    * @param port  the port
@@ -618,6 +850,19 @@ public interface HttpClient extends Measured {
    * @return a reference to this, so the API can be used fluently
    */
   WebSocketStream websocketStream(int port, String host, String requestURI, MultiMap headers, WebsocketVersion version,
+                                  String subProtocols);
+
+  /**
+   * Create a WebSocket stream to the specified host, relative request URI and default port, with the specified headers, using
+   * the specified version of WebSockets, and the specified websocket sub protocols
+   * @param host  the host
+   * @param requestURI  the relative URI
+   * @param headers  the headers
+   * @param version  the websocket version
+   * @param subProtocols  the subprotocols to use
+   * @return a reference to this, so the API can be used fluently
+   */
+  WebSocketStream websocketStream(String host, String requestURI, MultiMap headers, WebsocketVersion version,
                                   String subProtocols);
 
   /**

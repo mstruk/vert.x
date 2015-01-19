@@ -596,6 +596,11 @@
  * {@link examples.CoreExamples#example17}
  * ----
  *
+ * ==== Automatic clean-up in verticles
+ *
+ * If you're creating timers from inside verticles, those timers will be automatically closed
+ * when the verticle is undeployed.
+ *
  * [[event_bus]]
  * include::eventbus.adoc[]
  *

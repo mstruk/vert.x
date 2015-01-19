@@ -119,9 +119,19 @@ public class HttpClientImpl implements HttpClient {
   }
 
   @Override
+  public HttpClient websocket(String host, String requestURI, Handler<WebSocket> wsConnect) {
+    return websocket(options.getDefaultPort(), host, requestURI, wsConnect);
+  }
+
+  @Override
   public HttpClient websocket(int port, String host, String requestURI, MultiMap headers, Handler<WebSocket> wsConnect) {
     websocketStream(port, host, requestURI, headers, null).handler(wsConnect);
     return this;
+  }
+
+  @Override
+  public HttpClient websocket(String host, String requestURI, MultiMap headers, Handler<WebSocket> wsConnect) {
+    return websocket(options.getDefaultPort(), host, requestURI, headers, wsConnect);
   }
 
   @Override
@@ -131,10 +141,20 @@ public class HttpClientImpl implements HttpClient {
   }
 
   @Override
+  public HttpClient websocket(String host, String requestURI, MultiMap headers, WebsocketVersion version, Handler<WebSocket> wsConnect) {
+    return websocket(options.getDefaultPort(), host, requestURI, headers, version, wsConnect);
+  }
+
+  @Override
   public HttpClient websocket(int port, String host, String requestURI, MultiMap headers, WebsocketVersion version,
                               String subProtocols, Handler<WebSocket> wsConnect) {
     websocketStream(port, host, requestURI, headers, version, subProtocols).handler(wsConnect);
     return this;
+  }
+
+  @Override
+  public HttpClient websocket(String host, String requestURI, MultiMap headers, WebsocketVersion version, String subProtocols, Handler<WebSocket> wsConnect) {
+    return websocket(options.getDefaultPort(), host, requestURI, headers, version, subProtocols, wsConnect);
   }
 
   @Override
@@ -163,8 +183,18 @@ public class HttpClientImpl implements HttpClient {
   }
 
   @Override
+  public WebSocketStream websocketStream(String host, String requestURI) {
+    return websocketStream(options.getDefaultPort(), host, requestURI);
+  }
+
+  @Override
   public WebSocketStream websocketStream(int port, String host, String requestURI, MultiMap headers) {
     return websocketStream(port, host, requestURI, headers, null);
+  }
+
+  @Override
+  public WebSocketStream websocketStream(String host, String requestURI, MultiMap headers) {
+    return websocketStream(options.getDefaultPort(), host, requestURI, headers);
   }
 
   @Override
@@ -173,9 +203,19 @@ public class HttpClientImpl implements HttpClient {
   }
 
   @Override
+  public WebSocketStream websocketStream(String host, String requestURI, MultiMap headers, WebsocketVersion version) {
+    return websocketStream(options.getDefaultPort(), host, requestURI, headers, version);
+  }
+
+  @Override
   public WebSocketStream websocketStream(int port, String host, String requestURI, MultiMap headers, WebsocketVersion version,
                                          String subProtocols) {
     return new WebSocketStreamImpl(port, host, requestURI, headers, version, subProtocols);
+  }
+
+  @Override
+  public WebSocketStream websocketStream(String host, String requestURI, MultiMap headers, WebsocketVersion version, String subProtocols) {
+    return websocketStream(options.getDefaultPort(), host, requestURI, headers, version, subProtocols);
   }
 
   @Override
@@ -198,81 +238,6 @@ public class HttpClientImpl implements HttpClient {
     return websocketStream(options.getDefaultPort(), options.getDefaultHost(), requestURI, headers, version, subProtocols);
   }
 
-  private class WebSocketStreamImpl implements WebSocketStream {
-
-    final int port;
-    final String host;
-    final String requestURI;
-    final MultiMap headers;
-    final WebsocketVersion version;
-    final String subProtocols;
-    private Handler<WebSocket> handler;
-    private Handler<Throwable> exceptionHandler;
-    private Handler<Void> endHandler;
-
-    public WebSocketStreamImpl(int port, String host, String requestURI, MultiMap headers, WebsocketVersion version, String subProtocols) {
-      this.port = port;
-      this.host = host;
-      this.requestURI = requestURI;
-      this.headers = headers;
-      this.version = version;
-      this.subProtocols = subProtocols;
-    }
-
-    @Override
-    public synchronized WebSocketStream exceptionHandler(Handler<Throwable> handler) {
-      exceptionHandler = handler;
-      return this;
-    }
-
-    @Override
-    public synchronized WebSocketStream handler(Handler<WebSocket> handler) {
-      if (this.handler == null && handler != null) {
-        this.handler = handler;
-        checkClosed();
-        ContextImpl context = vertx.getOrCreateContext();
-        Handler<Throwable> connectionExceptionHandler = exceptionHandler;
-        if (connectionExceptionHandler == null) {
-          connectionExceptionHandler = log::error;
-        }
-        Handler<WebSocket> wsConnect;
-        if (endHandler != null) {
-          Handler<Void> endCallback = endHandler;
-          wsConnect = ws -> {
-            handler.handle(ws);
-            endCallback.handle(null);
-          };
-        } else {
-          wsConnect = handler;
-        }
-        getConnection(port, host, conn -> {
-          if (!conn.isClosed()) {
-            conn.toWebSocket(requestURI, headers, version, subProtocols, options.getMaxWebsocketFrameSize(), wsConnect);
-          } else {
-            websocket(port, host, requestURI, headers, version, subProtocols, wsConnect);
-          }
-        }, connectionExceptionHandler, context);
-      }
-      return this;
-    }
-
-    @Override
-    public synchronized WebSocketStream endHandler(Handler<Void> endHandler) {
-      this.endHandler = endHandler;
-      return this;
-    }
-
-    @Override
-    public WebSocketStream pause() {
-      return this;
-    }
-
-    @Override
-    public WebSocketStream resume() {
-      return this;
-    }
-  }
-
   @Override
   public HttpClientRequest requestAbs(HttpMethod method, String absoluteURI, Handler<HttpClientResponse> responseHandler) {
     Objects.requireNonNull(responseHandler, "no null responseHandler accepted");
@@ -283,6 +248,11 @@ public class HttpClientImpl implements HttpClient {
   public HttpClientRequest request(HttpMethod method, int port, String host, String requestURI, Handler<HttpClientResponse> responseHandler) {
     Objects.requireNonNull(responseHandler, "no null responseHandler accepted");
     return request(method, port, host, requestURI).handler(responseHandler);
+  }
+
+  @Override
+  public HttpClientRequest request(HttpMethod method, String host, String requestURI, Handler<HttpClientResponse> responseHandler) {
+    return request(method, options.getDefaultPort(), host, requestURI, responseHandler);
   }
 
   @Override
@@ -307,13 +277,28 @@ public class HttpClientImpl implements HttpClient {
   }
 
   @Override
+  public HttpClientRequest request(HttpMethod method, String host, String requestURI) {
+    return request(method, options.getDefaultPort(), host, requestURI);
+  }
+
+  @Override
   public HttpClientRequest get(int port, String host, String requestURI) {
     return request(HttpMethod.GET, port, host, requestURI);
   }
 
   @Override
+  public HttpClientRequest get(String host, String requestURI) {
+    return get(options.getDefaultPort(), host, requestURI);
+  }
+
+  @Override
   public HttpClientRequest get(int port, String host, String requestURI, Handler<HttpClientResponse> responseHandler) {
     return request(HttpMethod.GET, port, host, requestURI, responseHandler);
+  }
+
+  @Override
+  public HttpClientRequest get(String host, String requestURI, Handler<HttpClientResponse> responseHandler) {
+    return get(options.getDefaultPort(), host, requestURI, responseHandler);
   }
 
   @Override
@@ -343,6 +328,11 @@ public class HttpClientImpl implements HttpClient {
   }
 
   @Override
+  public HttpClient getNow(String host, String requestURI, Handler<HttpClientResponse> responseHandler) {
+    return getNow(options.getDefaultPort(), host, requestURI, responseHandler);
+  }
+
+  @Override
   public HttpClient getNow(String requestURI, Handler<HttpClientResponse> responseHandler) {
     get(requestURI, responseHandler).end();
     return this;
@@ -354,8 +344,18 @@ public class HttpClientImpl implements HttpClient {
   }
 
   @Override
+  public HttpClientRequest post(String host, String requestURI) {
+    return post(options.getDefaultPort(), host, requestURI);
+  }
+
+  @Override
   public HttpClientRequest post(int port, String host, String requestURI, Handler<HttpClientResponse> responseHandler) {
     return request(HttpMethod.POST, port, host, requestURI, responseHandler);
+  }
+
+  @Override
+  public HttpClientRequest post(String host, String requestURI, Handler<HttpClientResponse> responseHandler) {
+    return post(options.getDefaultPort(), host, requestURI, responseHandler);
   }
 
   @Override
@@ -384,8 +384,18 @@ public class HttpClientImpl implements HttpClient {
   }
 
   @Override
+  public HttpClientRequest head(String host, String requestURI) {
+    return head(options.getDefaultPort(), host, requestURI);
+  }
+
+  @Override
   public HttpClientRequest head(int port, String host, String requestURI, Handler<HttpClientResponse> responseHandler) {
     return request(HttpMethod.HEAD, port, host, requestURI, responseHandler);
+  }
+
+  @Override
+  public HttpClientRequest head(String host, String requestURI, Handler<HttpClientResponse> responseHandler) {
+    return head(options.getDefaultPort(), host, requestURI, responseHandler);
   }
 
   @Override
@@ -415,6 +425,11 @@ public class HttpClientImpl implements HttpClient {
   }
 
   @Override
+  public HttpClient headNow(String host, String requestURI, Handler<HttpClientResponse> responseHandler) {
+    return headNow(options.getDefaultPort(), host, requestURI, responseHandler);
+  }
+
+  @Override
   public HttpClient headNow(String requestURI, Handler<HttpClientResponse> responseHandler) {
     head(requestURI, responseHandler).end();
     return this;
@@ -426,8 +441,18 @@ public class HttpClientImpl implements HttpClient {
   }
 
   @Override
+  public HttpClientRequest options(String host, String requestURI) {
+    return options(options.getDefaultPort(), host, requestURI);
+  }
+
+  @Override
   public HttpClientRequest options(int port, String host, String requestURI, Handler<HttpClientResponse> responseHandler) {
     return request(HttpMethod.OPTIONS, port, host, requestURI, responseHandler);
+  }
+
+  @Override
+  public HttpClientRequest options(String host, String requestURI, Handler<HttpClientResponse> responseHandler) {
+    return options(options.getDefaultPort(), host, requestURI, responseHandler);
   }
 
   @Override
@@ -457,6 +482,11 @@ public class HttpClientImpl implements HttpClient {
   }
 
   @Override
+  public HttpClient optionsNow(String host, String requestURI, Handler<HttpClientResponse> responseHandler) {
+    return optionsNow(options.getDefaultPort(), host, requestURI, responseHandler);
+  }
+
+  @Override
   public HttpClient optionsNow(String requestURI, Handler<HttpClientResponse> responseHandler) {
     options(requestURI, responseHandler).end();
     return this;
@@ -468,8 +498,18 @@ public class HttpClientImpl implements HttpClient {
   }
 
   @Override
+  public HttpClientRequest put(String host, String requestURI) {
+    return put(options.getDefaultPort(), host, requestURI);
+  }
+
+  @Override
   public HttpClientRequest put(int port, String host, String requestURI, Handler<HttpClientResponse> responseHandler) {
     return request(HttpMethod.PUT, port, host, requestURI, responseHandler);
+  }
+
+  @Override
+  public HttpClientRequest put(String host, String requestURI, Handler<HttpClientResponse> responseHandler) {
+    return put(options.getDefaultPort(), host, requestURI, responseHandler);
   }
 
   @Override
@@ -498,8 +538,18 @@ public class HttpClientImpl implements HttpClient {
   }
 
   @Override
+  public HttpClientRequest delete(String host, String requestURI) {
+    return delete(options.getDefaultPort(), host, requestURI);
+  }
+
+  @Override
   public HttpClientRequest delete(int port, String host, String requestURI, Handler<HttpClientResponse> responseHandler) {
     return request(HttpMethod.DELETE, port, host, requestURI, responseHandler);
+  }
+
+  @Override
+  public HttpClientRequest delete(String host, String requestURI, Handler<HttpClientResponse> responseHandler) {
+    return delete(options.getDefaultPort(), host, requestURI, responseHandler);
   }
 
   @Override
@@ -780,6 +830,81 @@ public class HttpClientImpl implements HttpClient {
       if (!valid) {
         throw new IllegalStateException("Invalid object " + msg);
       }
+    }
+  }
+
+  private class WebSocketStreamImpl implements WebSocketStream {
+
+    final int port;
+    final String host;
+    final String requestURI;
+    final MultiMap headers;
+    final WebsocketVersion version;
+    final String subProtocols;
+    private Handler<WebSocket> handler;
+    private Handler<Throwable> exceptionHandler;
+    private Handler<Void> endHandler;
+
+    public WebSocketStreamImpl(int port, String host, String requestURI, MultiMap headers, WebsocketVersion version, String subProtocols) {
+      this.port = port;
+      this.host = host;
+      this.requestURI = requestURI;
+      this.headers = headers;
+      this.version = version;
+      this.subProtocols = subProtocols;
+    }
+
+    @Override
+    public synchronized WebSocketStream exceptionHandler(Handler<Throwable> handler) {
+      exceptionHandler = handler;
+      return this;
+    }
+
+    @Override
+    public synchronized WebSocketStream handler(Handler<WebSocket> handler) {
+      if (this.handler == null && handler != null) {
+        this.handler = handler;
+        checkClosed();
+        ContextImpl context = vertx.getOrCreateContext();
+        Handler<Throwable> connectionExceptionHandler = exceptionHandler;
+        if (connectionExceptionHandler == null) {
+          connectionExceptionHandler = log::error;
+        }
+        Handler<WebSocket> wsConnect;
+        if (endHandler != null) {
+          Handler<Void> endCallback = endHandler;
+          wsConnect = ws -> {
+            handler.handle(ws);
+            endCallback.handle(null);
+          };
+        } else {
+          wsConnect = handler;
+        }
+        getConnection(port, host, conn -> {
+          if (!conn.isClosed()) {
+            conn.toWebSocket(requestURI, headers, version, subProtocols, options.getMaxWebsocketFrameSize(), wsConnect);
+          } else {
+            websocket(port, host, requestURI, headers, version, subProtocols, wsConnect);
+          }
+        }, connectionExceptionHandler, context);
+      }
+      return this;
+    }
+
+    @Override
+    public synchronized WebSocketStream endHandler(Handler<Void> endHandler) {
+      this.endHandler = endHandler;
+      return this;
+    }
+
+    @Override
+    public WebSocketStream pause() {
+      return this;
+    }
+
+    @Override
+    public WebSocketStream resume() {
+      return this;
     }
   }
 
