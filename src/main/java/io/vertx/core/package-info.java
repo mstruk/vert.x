@@ -633,11 +633,11 @@
  *
  * == Clustering
  *
- * === Trouble shooting clustering
+ * === Trouble-shooting clustering
  *
- * === High Availability
+ * ===High Availability
  *
- * === Security notes
+ * == Security notes
  *
  * Warn about file uploads and serving files from arbitrary locations
  *
