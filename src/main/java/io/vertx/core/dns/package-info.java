@@ -16,6 +16,8 @@
 
 /**
  * == DNS client
+ *
+ * TODO
  */
 @Document(fileName = "dns.adoc")
 package io.vertx.core.dns;

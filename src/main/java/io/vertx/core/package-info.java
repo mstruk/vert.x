@@ -210,7 +210,7 @@
  * using the *exact same event loop*.
  *
  * [[golden_rule]]
- * == The Golden Rule - *Don't Block the Event Loop*
+ * == The Golden Rule - Don't Block the Event Loop
  *
  * We already know that the Vert.x APIs are non blocking and won't block the event loop, but that's not much help if
  * you block the event loop *yourself* in a handler.

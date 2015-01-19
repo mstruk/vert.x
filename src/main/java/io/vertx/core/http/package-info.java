@@ -1026,11 +1026,6 @@
  * If you're creating http servers and clients from inside verticles, those servers and clients will be automatically closed
  * when the verticle is undeployed.
  *
- *
- *
- *
- *
- *
  */
 @Document(fileName = "http.adoc")
 package io.vertx.core.http;
