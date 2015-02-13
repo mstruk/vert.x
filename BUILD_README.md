@@ -6,7 +6,9 @@ Maven 3.2.x
 
 ## To build a distro
 
-See the Vert.x stack project: https://github.com/vert-x3/vertx-stack
+Note: Also see the Vert.x stack project: https://github.com/vert-x3/vertx-stack/README.md
+
+eclipse/vert.x project contains the core Vert.x implementation. Building it produces 
 
 ## To run tests
 
