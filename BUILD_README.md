@@ -22,16 +22,20 @@ One thing to note is that building from master means building a SNAPSHOT version
     git clone git@github.com:eclipse/vert.x.git
     git clone git@github.com:vert-x3/vertx-codegen.git
     git clone git@github.com:vert-x3/vertx-codetrans.git
+    git clone git@github.com:vert-x3/vertx-service-factory.git
     git clone git@github.com:vert-x3/vertx-maven-service-factory.git
     git clone git@github.com:vert-x3/vertx-lang-js.git
     git clone git@github.com:vert-x3/vertx-lang-groovy.git
-    git clone git@github.com:vert-x3/vertx-lang-ruby.git
-    git clone git@github.com:vert-x3/vertx-lang-scala.git
-    git clone git@github.com:vert-x3/vertx-lang-python.git
-    git clone git@github.com:vert-x3/vertx-lang-ceylon.git
+    
+    # the next three don't build ATM
+    #git clone git@github.com:vert-x3/vertx-lang-scala.git
+    #git clone git@github.com:vert-x3/vertx-lang-python.git
+    #git clone git@github.com:vert-x3/vertx-lang-ceylon.git
+    
     git clone git@github.com:vert-x3/vertx-service-proxy.git
-    git clone git@github.com:vert-x3/vertx-service-factory.git
-    git clone git@github.com:vert-x3/vertx-ext-parent.git
+    
+    # doesn't build
+    #git clone git@github.com:vert-x3/vertx-ext-parent.git
     
     git clone git@github.com:vert-x3/vertx-metrics.git
     git clone git@github.com:vert-x3/vertx-rx.git
